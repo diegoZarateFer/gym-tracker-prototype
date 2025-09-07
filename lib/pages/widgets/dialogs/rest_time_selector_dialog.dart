@@ -5,11 +5,17 @@ import 'package:gym_tracker_ui/pages/widgets/modal_bottom_handle.dart';
 
 /// Lista para los minutos.
 ///
-final _minutes = List.generate(61, (minute) => Text('$minute'));
+final _minutes = List.generate(
+  61,
+  (minute) => minute < 10 ? Text('0$minute') : Text('$minute'),
+);
 
 /// Lista para los segundos.
 ///
-final _seconds = List.generate(61, (second) => Text('$second'));
+final _seconds = List.generate(
+  61,
+  (second) => second < 10 ? Text('0$second') : Text('$second'),
+);
 
 class RestTimeSelectorDialog extends StatefulWidget {
   const RestTimeSelectorDialog({super.key});
@@ -23,7 +29,7 @@ class _RestTimeSelectorDialogState extends State<RestTimeSelectorDialog> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: 300,
+      height: 350,
       child: Padding(
         padding: EdgeInsets.fromLTRB(2, 2, 2, context.keyBoardSpace),
         child: Column(

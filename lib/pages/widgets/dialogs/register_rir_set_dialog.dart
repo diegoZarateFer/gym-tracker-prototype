@@ -27,12 +27,12 @@ class _RegisterRIRSetState extends State<RegisterRIRSet> {
   /// Variable para controlar cuando se muestra el temporizador de
   /// descanso.
   ///
-  final _isRestingTimerActive = false;
+  bool _isRestingTimerActive = false;
 
   @override
   Widget build(BuildContext context) {
     return _isRestingTimerActive
-        ? RestTimerDialog()
+        ? RestTimerDialog(initialTime: const Duration(minutes: 2, seconds: 0))
         : SizedBox(
             width: double.infinity,
             child: SingleChildScrollView(
@@ -211,7 +211,10 @@ class _RegisterRIRSetState extends State<RegisterRIRSet> {
                       width: double.infinity,
                       child: ElevatedButton.icon(
                         onPressed: () {
-                          Navigator.of(context).pop();
+                          setState(() {
+                            _isRestingTimerActive = true;
+                          });
+                          // Navigator.of(context).pop();
                         },
                         icon: const Icon(Icons.check),
                         label: const Text("Done"),
