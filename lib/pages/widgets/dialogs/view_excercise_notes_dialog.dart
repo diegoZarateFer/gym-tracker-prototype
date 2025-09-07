@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_ui/core/extensions/context_ext.dart';
 import 'package:gym_tracker_ui/pages/widgets/modal_bottom_handle.dart';
 
 class ViewExerciseNotes extends StatelessWidget {
@@ -6,24 +7,18 @@ class ViewExerciseNotes extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final keyboardSpace = MediaQuery.of(context).viewInsets.bottom;
     return SizedBox(
       width: double.infinity,
       child: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(2, 2, 2, keyboardSpace + 16),
+          padding: EdgeInsets.fromLTRB(2, 2, 2, context.keyBoardSpace),
           child: Column(
             children: [
               const ModalBottomHandle(),
               const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    "Notes",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  Text("Notes", style: TextStyle(fontWeight: FontWeight.bold)),
                 ],
               ),
               const Divider(),

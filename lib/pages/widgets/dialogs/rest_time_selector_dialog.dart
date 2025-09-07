@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_ui/core/extensions/context_ext.dart';
 import 'package:gym_tracker_ui/pages/widgets/modal_bottom_handle.dart';
 
 /// Lista para los minutos.
@@ -20,22 +21,18 @@ class RestTimeSelectorDialog extends StatefulWidget {
 class _RestTimeSelectorDialogState extends State<RestTimeSelectorDialog> {
   @override
   Widget build(BuildContext context) {
-    final keyboardSpace = MediaQuery.of(context).viewInsets.bottom;
-
     return SizedBox(
       width: double.infinity,
       height: 300,
       child: Padding(
-        padding: EdgeInsets.fromLTRB(2, 2, 2, keyboardSpace + 16),
+        padding: EdgeInsets.fromLTRB(2, 2, 2, context.keyBoardSpace),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           children: [
             const ModalBottomHandle(),
             const Text(
               "Set Rest Timer",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Expanded(

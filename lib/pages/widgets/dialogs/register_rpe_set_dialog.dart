@@ -39,12 +39,11 @@ class _RegisterRPESetState extends State<RegisterRPESet> {
 
   @override
   Widget build(BuildContext context) {
-    final keyboardSpace = MediaQuery.of(context).viewInsets.bottom;
     return SizedBox(
       width: double.infinity,
       child: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(2, 2, 2, keyboardSpace + 16),
+          padding: EdgeInsets.fromLTRB(2, 2, 2, context.keyBoardSpace),
           child: Column(
             children: [
               const ModalBottomHandle(),
@@ -55,32 +54,24 @@ class _RegisterRPESetState extends State<RegisterRPESet> {
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    icon: const Icon(
-                      Icons.check,
-                    ),
+                    icon: const Icon(Icons.check),
                   ),
                   const Spacer(),
                   const Text(
                     "Register Your Set",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const Spacer(),
                   IconButton(
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    icon: const Icon(
-                      Icons.close,
-                    ),
+                    icon: const Icon(Icons.close),
                   ),
                 ],
               ),
               const Divider(),
-              const SizedBox(
-                height: 16,
-              ),
+              const SizedBox(height: 16),
               Row(
                 children: [
                   const Spacer(),
@@ -104,29 +95,17 @@ class _RegisterRPESetState extends State<RegisterRPESet> {
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    width: 8,
-                  ),
+                  const SizedBox(width: 8),
                   const Text(
                     "units",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
-                  const SizedBox(
-                    width: 8,
-                  ),
+                  const SizedBox(width: 8),
                   const Text(
                     "x",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
-                  const SizedBox(
-                    width: 8,
-                  ),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: TextField(
                       textAlignVertical: TextAlignVertical.center,
@@ -145,9 +124,7 @@ class _RegisterRPESetState extends State<RegisterRPESet> {
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    width: 8,
-                  ),
+                  const SizedBox(width: 8),
                   Text(
                     "@ $_selectedRPEValue",
                     style: const TextStyle(
@@ -161,10 +138,7 @@ class _RegisterRPESetState extends State<RegisterRPESet> {
               const SizedBox(height: 16),
               const Text(
                 "RPE",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
               const SizedBox(height: 4),
               Slider(
@@ -185,10 +159,12 @@ class _RegisterRPESetState extends State<RegisterRPESet> {
                       icon: const Icon(Icons.videocam),
                       label: const Text("Record"),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Theme.of(context).colorScheme.onBackground,
-                        foregroundColor:
-                            Theme.of(context).colorScheme.background,
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.onBackground,
+                        foregroundColor: Theme.of(
+                          context,
+                        ).colorScheme.background,
                       ),
                     ),
                   ),
@@ -196,8 +172,9 @@ class _RegisterRPESetState extends State<RegisterRPESet> {
                   Expanded(
                     child: ElevatedButton.icon(
                       onPressed: () async {
-                        final weight = await context
-                            .showModalDialog<double?>(const PlateCalculator());
+                        final weight = await context.showModalDialog<double?>(
+                          const PlateCalculator(),
+                        );
 
                         if (weight != null) {
                           _weightController.text = weight.toString();
@@ -206,10 +183,12 @@ class _RegisterRPESetState extends State<RegisterRPESet> {
                       icon: const Icon(Icons.calculate),
                       label: const Text("Calculator"),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Theme.of(context).colorScheme.onBackground,
-                        foregroundColor:
-                            Theme.of(context).colorScheme.background,
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.onBackground,
+                        foregroundColor: Theme.of(
+                          context,
+                        ).colorScheme.background,
                       ),
                     ),
                   ),

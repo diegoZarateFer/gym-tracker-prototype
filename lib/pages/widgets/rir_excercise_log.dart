@@ -71,14 +71,14 @@ class RIRExcerciseLog extends StatelessWidget {
                     ),
                     FieldCell(
                       value: "12",
-                      onRegisterSet: () {
-                        context.showBottomDialog(const RegisterRIRSet());
+                     onRegisterSet: ()  {
+                         context.showBottomDialog(const RegisterRIRSet());
                       },
                     ),
                     FieldCell(
                       value: "2",
-                      onRegisterSet: () {
-                        context.showBottomDialog(const RegisterRIRSet());
+                      onRegisterSet: ()  {
+                         context.showBottomDialog(const RegisterRIRSet());
                       },
                     ),
                     const TextCell("120kgx10@2")
@@ -89,8 +89,8 @@ class RIRExcerciseLog extends StatelessWidget {
                     const TitleCell("2"),
                     const EmptyCell(),
                     AddSetCell(
-                      onAddSet: () {
-                        context.showBottomDialog(const RegisterRIRSet());
+                      onAddSet: ()  {
+                         context.showBottomDialog(const RegisterRIRSet());
                       },
                     ),
                     const EmptyCell(),

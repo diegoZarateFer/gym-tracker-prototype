@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_ui/core/extensions/context_ext.dart';
 import 'package:gym_tracker_ui/pages/widgets/modal_bottom_handle.dart';
 
 class ShowSetVideos extends StatelessWidget {
@@ -6,12 +7,11 @@ class ShowSetVideos extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final keyboardSpace = MediaQuery.of(context).viewInsets.bottom;
     return SizedBox(
       width: double.infinity,
       child: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.fromLTRB(2, 2, 2, keyboardSpace + 16),
+          padding: EdgeInsets.fromLTRB(2, 2, 2, context.keyBoardSpace),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -21,9 +21,7 @@ class ShowSetVideos extends StatelessWidget {
                 children: [
                   Text(
                     "Recorded Videos",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -62,9 +60,7 @@ class SetVideoItem extends StatelessWidget {
     return GestureDetector(
       child: ListTile(
         title: Text(title),
-        trailing: const Icon(
-          Icons.play_circle_fill,
-        ),
+        trailing: const Icon(Icons.play_circle_fill),
       ),
     );
   }

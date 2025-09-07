@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_ui/core/extensions/context_ext.dart';
 import 'package:gym_tracker_ui/pages/widgets/modal_bottom_handle.dart';
 
 enum Unit { units, kgs, lbs }
 
 class UnitSelectorDialog extends StatefulWidget {
-  const UnitSelectorDialog({
-    super.key,
-  });
+  const UnitSelectorDialog({super.key});
 
   @override
   State<UnitSelectorDialog> createState() => _UnitSelectorDialogState();
@@ -27,21 +26,17 @@ class _UnitSelectorDialogState extends State<UnitSelectorDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final keyboardSpace = MediaQuery.of(context).viewInsets.bottom;
-
     return SizedBox(
       width: double.infinity,
       child: Padding(
-        padding: EdgeInsets.fromLTRB(2, 2, 2, keyboardSpace + 16),
+        padding: EdgeInsets.fromLTRB(2, 2, 2, context.keyBoardSpace),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             const ModalBottomHandle(),
             const Text(
               "Unit For The Excercise",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Container(
@@ -59,9 +54,7 @@ class _UnitSelectorDialogState extends State<UnitSelectorDialog> {
                       groupValue: __selectedUnit,
                       title: const Text(
                         "Kilograms (kgs)",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       onChanged: _changeUnitHandler,
                       activeColor: Theme.of(context).colorScheme.primary,
@@ -73,9 +66,7 @@ class _UnitSelectorDialogState extends State<UnitSelectorDialog> {
                       groupValue: __selectedUnit,
                       title: const Text(
                         "Pounds (lbs)",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       onChanged: _changeUnitHandler,
                       activeColor: Theme.of(context).colorScheme.primary,
@@ -87,9 +78,7 @@ class _UnitSelectorDialogState extends State<UnitSelectorDialog> {
                       groupValue: __selectedUnit,
                       title: const Text(
                         "Units",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       onChanged: _changeUnitHandler,
                       activeColor: Theme.of(context).colorScheme.primary,

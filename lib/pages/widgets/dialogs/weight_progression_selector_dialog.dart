@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_ui/core/extensions/context_ext.dart';
 import 'package:gym_tracker_ui/pages/widgets/modal_bottom_handle.dart';
 
 enum ProgressionWeights { light, easy, medium, custom }
@@ -65,22 +66,19 @@ class _WeightProgressionSelectorDialogState
 
   @override
   Widget build(BuildContext context) {
-    final keyboardSpace = MediaQuery.of(context).viewInsets.bottom;
     final isCustomWightSelected =
         _selectedProgression == ProgressionWeights.custom;
 
     return SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsets.fromLTRB(2, 2, 2, keyboardSpace + 16),
+        padding: EdgeInsets.fromLTRB(2, 2, 2, context.keyBoardSpace),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             const ModalBottomHandle(),
             const Text(
               "Choose a Weight",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             const Text(
@@ -106,7 +104,7 @@ class _WeightProgressionSelectorDialogState
                     ),
                   ),
                   const SizedBox(width: 8),
-                  const Text("units.")
+                  const Text("units."),
                 ],
               ),
             if (isCustomWightSelected) const SizedBox(height: 16),
@@ -125,13 +123,9 @@ class _WeightProgressionSelectorDialogState
                       groupValue: _selectedProgression,
                       title: const Text(
                         "2.5 units",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      subtitle: const Text(
-                        "Recommended",
-                      ),
+                      subtitle: const Text("Recommended"),
                       onChanged: _changeSelectedWeightHandler,
                       activeColor: Theme.of(context).colorScheme.primary,
                       controlAffinity: ListTileControlAffinity.trailing,
@@ -142,9 +136,7 @@ class _WeightProgressionSelectorDialogState
                       groupValue: _selectedProgression,
                       title: const Text(
                         "5 units",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       onChanged: _changeSelectedWeightHandler,
                       activeColor: Theme.of(context).colorScheme.primary,
@@ -156,9 +148,7 @@ class _WeightProgressionSelectorDialogState
                       groupValue: _selectedProgression,
                       title: const Text(
                         "10 units",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       onChanged: _changeSelectedWeightHandler,
                       activeColor: Theme.of(context).colorScheme.primary,
@@ -170,9 +160,7 @@ class _WeightProgressionSelectorDialogState
                       groupValue: _selectedProgression,
                       title: const Text(
                         "Custom",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       onChanged: _changeSelectedWeightHandler,
                       activeColor: Theme.of(context).colorScheme.primary,
