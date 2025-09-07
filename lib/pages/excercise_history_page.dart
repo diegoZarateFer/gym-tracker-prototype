@@ -1,0 +1,75 @@
+import 'package:flutter/material.dart';
+import 'package:gym_tracker_ui/pages/excercise_calendar_page.dart';
+import 'package:gym_tracker_ui/core/extensions/context_ext.dart';
+import 'package:gym_tracker_ui/pages/excercise_stats_page.dart';
+import 'package:gym_tracker_ui/pages/widgets/dialogs/filter_excercise_history_dialog.dart';
+import 'package:gym_tracker_ui/pages/widgets/regular_excercise_history_log.dart';
+import 'package:gym_tracker_ui/pages/widgets/rir_history_excercise_log.dart';
+import 'package:gym_tracker_ui/pages/widgets/rpe_history_excercise_log.dart';
+import 'package:gym_tracker_ui/pages/widgets/subjective_excercise_history_log.dart';
+
+class ExcerciseHistoryPage extends StatefulWidget {
+  static const String route = "/excercise-history";
+
+  const ExcerciseHistoryPage({
+    super.key,
+  });
+
+  @override
+  State<ExcerciseHistoryPage> createState() => _ExcerciseHistoryPageState();
+}
+
+class _ExcerciseHistoryPageState extends State<ExcerciseHistoryPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.background,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        title: const Text("Excercise Name"),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).pushNamed(ExcerciseCalendarPage.route);
+            },
+            icon: const Icon(
+              Icons.calendar_month,
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).pushNamed(ExcerciseStatsPage.route);
+            },
+            icon: const Icon(
+              Icons.auto_graph,
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              context.showBottomDialog(const FilterExcerciseHistoryDialog());
+            },
+            icon: const Icon(
+              Icons.tune,
+            ),
+          ),
+        ],
+      ),
+      body: const SingleChildScrollView(
+        child: Column(
+          children: [
+            RIRHistoryExcerciseLog(),
+            RPEHistoryExcerciseLog(),
+            RegularExcerciseHistoryLog(),
+            SubjectiveExcerciseHistoryLog(),
+          ],
+        ),
+      ),
+    );
+  }
+}
