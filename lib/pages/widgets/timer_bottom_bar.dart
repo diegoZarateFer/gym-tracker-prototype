@@ -27,7 +27,7 @@ class TimerBottomBar extends StatelessWidget {
                 onPressed: () {
                   context.showBottomDialog(
                     const RestTimerDialog(
-                      initialTime: Duration(minutes: 3, seconds: 45),
+                      initialTime: Duration(minutes: 0, seconds: 5),
                     ),
                   );
                 },

@@ -2,11 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_ui/core/extensions/context_ext.dart';
+import 'package:gym_tracker_ui/core/sound/app_audio_player.dart';
 import 'package:gym_tracker_ui/pages/widgets/modal_bottom_handle.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 ///
-/// TODO: Implemetar un bloc o cubit para gestionar este estado a lo largo
+/// TODO: Implementar un bloc o cubit para gestionar este estado a lo largo
 /// del resto de pantallas.
 ///
 
@@ -30,6 +31,7 @@ class _RestTimerDialogState extends State<RestTimerDialog> {
   Timer? _timer;
 
   bool _timerIsPaused = false;
+  bool _timerIsFinished = false;
 
   ///
   /// Funcion para obtener el label del tiempo restante.
@@ -48,7 +50,7 @@ class _RestTimerDialogState extends State<RestTimerDialog> {
   /// Funciones para controlar el flujo del timer.
   ///
 
-  void _onTimerTick(timer) {
+  void _onTimerTick(timer) async {
     if (_timerIsPaused) {
       return;
     }
@@ -59,7 +61,10 @@ class _RestTimerDialogState extends State<RestTimerDialog> {
       });
     } else {
       _cancelTimer();
-      Navigator.of(context).pop();
+      await AppAudioPlayer().playSound();
+      setState(() {
+        _timerIsFinished = true;
+      });
     }
   }
 
@@ -137,6 +142,98 @@ class _RestTimerDialogState extends State<RestTimerDialog> {
         ? _remainningTime.inSeconds / widget.initialTime.inSeconds
         : 1;
 
+    return _timerIsFinished
+        ? FinishedRestTimer()
+        : SizedBox(
+            width: double.infinity,
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(2, 2, 2, context.keyBoardSpace),
+                child: Column(
+                  children: [
+                    const ModalBottomHandle(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          icon: Icon(Icons.keyboard_arrow_down_outlined),
+                        ),
+                        const Spacer(),
+                        Text(
+                          "Get Ready for Your Next Set! 💪",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const Spacer(),
+                        IconButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          icon: Icon(Icons.skip_next),
+                        ),
+                      ],
+                    ),
+                    const Divider(),
+                    const SizedBox(height: 16),
+                    CircularPercentIndicator(
+                      radius: 80,
+                      circularStrokeCap: CircularStrokeCap.round,
+                      lineWidth: 10,
+                      percent: timerPercent,
+                      center: Text(
+                        _getRemainningTimeLabel(_remainningTime),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                      progressColor: Theme.of(context).colorScheme.primary,
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: _restartTimer,
+                          label: Text("Restart"),
+                          icon: Icon(Icons.restart_alt),
+                        ),
+                        const SizedBox(width: 8),
+                        ElevatedButton.icon(
+                          onPressed: _timerIsPaused
+                              ? _resumeTimerHandler
+                              : _pauseTimerHandler,
+                          label: Text(_timerIsPaused ? "Resume" : "Pause"),
+                          icon: Icon(
+                            _timerIsPaused ? Icons.play_arrow : Icons.pause,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            _incrementTimer(const Duration(seconds: 10));
+                          },
+                          label: Text("10s"),
+                          icon: Icon(Icons.add),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+  }
+}
+
+class FinishedRestTimer extends StatelessWidget {
+  const FinishedRestTimer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
       child: SingleChildScrollView(
@@ -156,15 +253,16 @@ class _RestTimerDialogState extends State<RestTimerDialog> {
                   ),
                   const Spacer(),
                   Text(
-                    "Get Ready for Your Next Set! 💪",
+                    "Here We Go! 💪",
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const Spacer(),
                   IconButton(
                     onPressed: () {
+                      AppAudioPlayer().stopSound();
                       Navigator.of(context).pop();
                     },
-                    icon: Icon(Icons.skip_next),
+                    icon: Icon(Icons.close),
                   ),
                 ],
               ),
@@ -174,15 +272,8 @@ class _RestTimerDialogState extends State<RestTimerDialog> {
                 radius: 80,
                 circularStrokeCap: CircularStrokeCap.round,
                 lineWidth: 10,
-                percent: timerPercent,
-                center: Text(
-                  _getRemainningTimeLabel(_remainningTime),
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
+                percent: 1,
+                center: Text("Time's Up!"),
                 progressColor: Theme.of(context).colorScheme.primary,
               ),
               const SizedBox(height: 16),
@@ -190,25 +281,12 @@ class _RestTimerDialogState extends State<RestTimerDialog> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton.icon(
-                    onPressed: _restartTimer,
-                    label: Text("Restart"),
-                    icon: Icon(Icons.restart_alt),
-                  ),
-                  const SizedBox(width: 8),
-                  ElevatedButton.icon(
-                    onPressed: _timerIsPaused
-                        ? _resumeTimerHandler
-                        : _pauseTimerHandler,
-                    label: Text(_timerIsPaused ? "Resume" : "Pause"),
-                    icon: Icon(_timerIsPaused ? Icons.play_arrow : Icons.pause),
-                  ),
-                  const SizedBox(width: 8),
-                  ElevatedButton.icon(
                     onPressed: () {
-                      _incrementTimer(const Duration(seconds: 10));
+                      AppAudioPlayer().stopSound();
+                      Navigator.of(context).pop();
                     },
-                    label: Text("10s"),
-                    icon: Icon(Icons.add),
+                    label: Text("Close"),
+                    icon: Icon(Icons.close),
                   ),
                 ],
               ),
