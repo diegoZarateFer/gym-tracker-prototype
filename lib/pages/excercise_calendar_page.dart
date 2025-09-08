@@ -5,9 +5,7 @@ import 'package:table_calendar/table_calendar.dart';
 class ExcerciseCalendarPage extends StatefulWidget {
   static const String route = "/excercise-calendar";
 
-  const ExcerciseCalendarPage({
-    super.key,
-  });
+  const ExcerciseCalendarPage({super.key});
 
   @override
   State<ExcerciseCalendarPage> createState() => _ExcerciseCalendarPageState();
@@ -60,11 +58,9 @@ class _ExcerciseCalendarPageState extends State<ExcerciseCalendarPage> {
                     lastDay: _lastDay,
                     calendarFormat: _calendarFormat,
                     availableCalendarFormats: const {
-                      CalendarFormat.month: 'month'
+                      CalendarFormat.month: 'month',
                     },
-                    headerStyle: const HeaderStyle(
-                      titleCentered: true,
-                    ),
+                    headerStyle: const HeaderStyle(titleCentered: true),
                   ),
                 ),
               ),

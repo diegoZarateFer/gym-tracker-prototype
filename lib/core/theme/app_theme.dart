@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 final ThemeData appTheme = ThemeData(
   brightness: Brightness.dark,
   scaffoldBackgroundColor: Colors.blueGrey,
+
   colorScheme: const ColorScheme.dark(
     background: Colors.blueGrey,
     surface: Color(0xFF342F3F),
@@ -24,9 +25,7 @@ final ThemeData appTheme = ThemeData(
       fontWeight: FontWeight.w600,
     ),
   ),
-  textTheme: GoogleFonts.assistantTextTheme().apply(
-    bodyColor: Colors.white,
-  ),
+  textTheme: GoogleFonts.assistantTextTheme().apply(bodyColor: Colors.white),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       backgroundColor: const Color(0xFF8E6CEF),
@@ -110,9 +109,7 @@ final ThemeData appDarkTheme = ThemeData(
     backgroundColor: Color.fromARGB(255, 21, 29, 34),
     elevation: 10,
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(
-        top: Radius.circular(12),
-      ),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
     ),
   ),
   inputDecorationTheme: const InputDecorationTheme(
@@ -123,10 +120,7 @@ final ThemeData appDarkTheme = ThemeData(
       borderRadius: BorderRadius.all(Radius.circular(12)),
     ),
     focusedBorder: OutlineInputBorder(
-      borderSide: BorderSide(
-        color: Colors.green,
-        width: 2,
-      ),
+      borderSide: BorderSide(color: Colors.green, width: 2),
       borderRadius: BorderRadius.all(Radius.circular(12)),
     ),
   ),

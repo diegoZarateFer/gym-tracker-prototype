@@ -5,6 +5,11 @@ import 'package:gym_tracker_ui/core/extensions/context_ext.dart';
 import 'package:gym_tracker_ui/pages/widgets/modal_bottom_handle.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
+///
+/// TODO: Implemetar un bloc o cubit para gestionar este estado a lo largo
+/// del resto de pantallas.
+///
+
 const timerTickInterval = Duration(seconds: 1);
 
 class RestTimerDialog extends StatefulWidget {
@@ -102,6 +107,15 @@ class _RestTimerDialogState extends State<RestTimerDialog> {
     _startTimer();
   }
 
+  ///
+  /// Incrementar timer.
+  ///
+  void _incrementTimer(Duration increment) {
+    setState(() {
+      _remainningTime += increment;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -119,7 +133,9 @@ class _RestTimerDialogState extends State<RestTimerDialog> {
   @override
   Widget build(BuildContext context) {
     double timerPercent =
-        _remainningTime.inSeconds / widget.initialTime.inSeconds;
+        (_remainningTime.inSeconds <= widget.initialTime.inSeconds)
+        ? _remainningTime.inSeconds / widget.initialTime.inSeconds
+        : 1;
 
     return SizedBox(
       width: double.infinity,
@@ -129,10 +145,30 @@ class _RestTimerDialogState extends State<RestTimerDialog> {
           child: Column(
             children: [
               const ModalBottomHandle(),
-              Text(
-                "Get Ready for Your Next Set! 💪",
-                style: TextStyle(fontWeight: FontWeight.bold),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    icon: Icon(Icons.keyboard_arrow_down_outlined),
+                  ),
+                  const Spacer(),
+                  Text(
+                    "Get Ready for Your Next Set! 💪",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    icon: Icon(Icons.skip_next),
+                  ),
+                ],
               ),
+              const Divider(),
               const SizedBox(height: 16),
               CircularPercentIndicator(
                 radius: 80,
@@ -149,7 +185,6 @@ class _RestTimerDialogState extends State<RestTimerDialog> {
                 ),
                 progressColor: Theme.of(context).colorScheme.primary,
               ),
-
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -170,10 +205,10 @@ class _RestTimerDialogState extends State<RestTimerDialog> {
                   const SizedBox(width: 8),
                   ElevatedButton.icon(
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      _incrementTimer(const Duration(seconds: 10));
                     },
-                    label: Text("Skip"),
-                    icon: Icon(Icons.skip_next),
+                    label: Text("10s"),
+                    icon: Icon(Icons.add),
                   ),
                 ],
               ),

@@ -22,32 +22,24 @@ class AddExerciseComment extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    icon: const Icon(
-                      Icons.check,
-                    ),
+                    icon: const Icon(Icons.check),
                   ),
                   const Spacer(),
                   const Text(
                     "Comments",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const Spacer(),
                   IconButton(
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    icon: const Icon(
-                      Icons.close,
-                    ),
+                    icon: const Icon(Icons.close),
                   ),
                 ],
               ),
               const Divider(),
-              const SizedBox(
-                height: 16,
-              ),
+              const SizedBox(height: 16),
               const TextField(
                 textAlignVertical: TextAlignVertical.center,
                 textAlign: TextAlign.start,

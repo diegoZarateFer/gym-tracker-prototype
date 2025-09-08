@@ -3,6 +3,7 @@ import 'package:gym_tracker_ui/pages/widgets/regular_excercise_log.dart';
 import 'package:gym_tracker_ui/pages/widgets/rir_excercise_log.dart';
 import 'package:gym_tracker_ui/pages/widgets/rpe_excercise_log.dart';
 import 'package:gym_tracker_ui/pages/widgets/subjective_excercise_log.dart';
+import 'package:gym_tracker_ui/pages/widgets/timer_bottom_bar.dart';
 import 'package:gym_tracker_ui/pages/widgets/week_calendar.dart';
 import 'package:intl/intl.dart';
 
@@ -15,10 +16,7 @@ class RegisterWorkoutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text("Workout Name"),
-      ),
+      appBar: AppBar(centerTitle: true, title: const Text("Workout Name")),
       body: Column(
         children: [
           Padding(
@@ -44,9 +42,7 @@ class RegisterWorkoutPage extends StatelessWidget {
                     ElevatedButton.icon(
                       onPressed: () {},
                       icon: const Icon(Icons.add),
-                      label: const Text(
-                        "Add Excercise",
-                      ),
+                      label: const Text("Add Excercise"),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 8,
@@ -76,44 +72,10 @@ class RegisterWorkoutPage extends StatelessWidget {
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
+      bottomNavigationBar: TimerBottomBar(),
     );
   }
 }
-
-
-//  CalendarWeek(
-//             backgroundColor: Colors.transparent,
-//             height: 150,
-//             showMonth: false,
-//             minDate: DateTime.now().add(const Duration(days: -365)),
-//             maxDate: DateTime.now().add(const Duration(days: 365)),
-//             monthViewBuilder: (DateTime time) => Align(
-//               alignment: FractionalOffset.center,
-//               child: Container(
-//                 margin: const EdgeInsets.symmetric(
-//                   vertical: 2,
-//                 ),
-//                 child: Text(
-//                   formatter.format(time),
-//                   overflow: TextOverflow.ellipsis,
-//                   textAlign: TextAlign.center,
-//                   style: const TextStyle(
-//                     fontWeight: FontWeight.w600,
-//                   ),
-//                 ),
-//               ),
-//             ),
-//             decorations: [
-//               DecorationItem(
-//                 decorationAlignment: FractionalOffset.bottomRight,
-//                 date: DateTime.now(),
-//                 decoration: const Icon(
-//                   Icons.today,
-//                   color: Colors.blue,
-//                 ),
-//               ),
-//             ],
-//           ),
