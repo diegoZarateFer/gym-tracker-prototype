@@ -3,7 +3,7 @@ import 'package:gym_tracker_ui/pages/widgets/regular_excercise_log.dart';
 import 'package:gym_tracker_ui/pages/widgets/rir_excercise_log.dart';
 import 'package:gym_tracker_ui/pages/widgets/rpe_excercise_log.dart';
 import 'package:gym_tracker_ui/pages/widgets/subjective_excercise_log.dart';
-import 'package:gym_tracker_ui/pages/widgets/timer_bottom_bar.dart';
+import 'package:gym_tracker_ui/pages/widgets/rest_timer_bottom_bar.dart';
 import 'package:gym_tracker_ui/pages/widgets/week_calendar.dart';
 import 'package:intl/intl.dart';
 
@@ -75,7 +75,7 @@ class RegisterWorkoutPage extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: TimerBottomBar(),
+      bottomNavigationBar: RestTimerBottomBar(),
     );
   }
 }

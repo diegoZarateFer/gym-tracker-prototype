@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_ui/core/extensions/context_ext.dart';
-import 'package:gym_tracker_ui/pages/widgets/dialogs/intensity_indicator_selector_dialog.dart';
 import 'package:gym_tracker_ui/pages/widgets/dialogs/rest_time_selector_dialog.dart';
 import 'package:gym_tracker_ui/pages/widgets/dialogs/unit_selector_dialog.dart';
 
@@ -101,28 +100,6 @@ class _ExcerciseSettingsFormState extends State<ExcerciseSettingsForm> {
                             ),
                             SizedBox(width: 8),
                             Text("Unit"),
-                          ],
-                        ),
-                        trailing: Icon(
-                          Icons.arrow_forward_ios,
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        context.showBottomDialog(
-                            const IntensityIndicatorSelectorDialog());
-                      },
-                      child: const ListTile(
-                        contentPadding: EdgeInsets.symmetric(horizontal: 4),
-                        title: Row(
-                          children: [
-                            Icon(
-                              Icons.bolt,
-                              color: Colors.yellow,
-                            ),
-                            SizedBox(width: 8),
-                            Text("Intensity Indicator"),
                           ],
                         ),
                         trailing: Icon(
