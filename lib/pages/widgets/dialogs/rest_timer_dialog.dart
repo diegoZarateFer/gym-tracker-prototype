@@ -1,9 +1,13 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:alarm/alarm.dart';
+import 'package:alarm/utils/alarm_set.dart';
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_ui/core/extensions/context_ext.dart';
 import 'package:gym_tracker_ui/core/sound/app_audio_player.dart';
 import 'package:gym_tracker_ui/pages/widgets/modal_bottom_handle.dart';
+import 'package:logger/logger.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 ///
@@ -24,6 +28,11 @@ class RestTimerDialog extends StatefulWidget {
 
 class _RestTimerDialogState extends State<RestTimerDialog> {
   ///
+  /// Logger.
+  ///
+  static final Logger logger = Logger();
+
+  ///
   /// Variables para controlar el temporizador.
   ///
 
@@ -32,6 +41,13 @@ class _RestTimerDialogState extends State<RestTimerDialog> {
 
   bool _timerIsPaused = false;
   bool _timerIsFinished = false;
+
+  AlarmSettings? _alarmSettings;
+
+  ///
+  /// Stream para controlar las alarmas.
+  ///
+  static StreamSubscription<AlarmSet>? ringSubscription;
 
   ///
   /// Funcion para obtener el label del tiempo restante.
@@ -61,10 +77,7 @@ class _RestTimerDialogState extends State<RestTimerDialog> {
       });
     } else {
       _cancelTimer();
-      await AppAudioPlayer().playSound();
-      setState(() {
-        _timerIsFinished = true;
-      });
+      await _launchTimerAlarm();
     }
   }
 
@@ -121,9 +134,53 @@ class _RestTimerDialogState extends State<RestTimerDialog> {
     });
   }
 
+  ///
+  /// Funcion para lanzar una nueva alarma.
+  ///
+  Future<void> _launchTimerAlarm() async {
+    logger.t("Lanzando alarma al termino de temporizador.");
+
+    final randomId = DateTime.now().millisecondsSinceEpoch % 10000;
+    final alarmSettings = AlarmSettings(
+      id: randomId,
+      dateTime: DateTime.now(),
+      assetAudioPath: 'assets/sounds/timer_sounds/timer_alarm_sound_4.mp3',
+      volumeSettings: VolumeSettings.fixed(volume: 0.8),
+      notificationSettings: NotificationSettings(
+        title: 'Time\'s Up!',
+        body: 'Let\'s Go For The Next Set! 💪',
+        icon: 'notification_icon',
+      ),
+      warningNotificationOnKill: Platform.isIOS,
+    );
+
+    setState(() {
+      _alarmSettings = alarmSettings;
+    });
+
+    await Alarm.set(alarmSettings: alarmSettings);
+  }
+
+  ///
+  /// Funcion para detectar cuando se emite una nueva
+  /// alarma.
+  ///
+  Future<void> _alarmsChangedHandler(AlarmSet alarms) async {
+    logger.t("Cambio en stream de alarmas detectado.");
+    if (alarms.alarms.isNotEmpty) {
+      logger.d("Establecer temporizador finalizado.");
+
+      setState(() {
+        _timerIsFinished = true;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+
+    ringSubscription = Alarm.ringing.listen(_alarmsChangedHandler);
 
     _remainningTime = widget.initialTime;
     _startTimer();
@@ -132,18 +189,20 @@ class _RestTimerDialogState extends State<RestTimerDialog> {
   @override
   void dispose() {
     _cancelTimer();
+    ringSubscription?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    logger.d("_timerIsFinished = $_timerIsFinished");
     double timerPercent =
         (_remainningTime.inSeconds <= widget.initialTime.inSeconds)
         ? _remainningTime.inSeconds / widget.initialTime.inSeconds
         : 1;
 
     return _timerIsFinished
-        ? FinishedRestTimer()
+        ? FinishedRestTimer(alarmSettings: _alarmSettings!)
         : SizedBox(
             width: double.infinity,
             child: SingleChildScrollView(
@@ -229,11 +288,49 @@ class _RestTimerDialogState extends State<RestTimerDialog> {
   }
 }
 
-class FinishedRestTimer extends StatelessWidget {
-  const FinishedRestTimer({super.key});
+class FinishedRestTimer extends StatefulWidget {
+  const FinishedRestTimer({super.key, required this.alarmSettings});
+
+  final AlarmSettings alarmSettings;
+
+  @override
+  State<FinishedRestTimer> createState() => _FinishedRestTimerState();
+}
+
+class _FinishedRestTimerState extends State<FinishedRestTimer> {
+  ///
+  /// Logger.
+  ///
+  static final Logger logger = Logger();
+
+  ///
+  /// Stream para el control de las alarmas.
+  ///
+  StreamSubscription<AlarmSet>? _alarmRingingSubscription;
+
+  Future<void> stopAlarm() async {
+    Alarm.stop(widget.alarmSettings.id);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _alarmRingingSubscription = Alarm.ringing.listen((alarm) {
+      if (alarm.containsId(widget.alarmSettings.id)) {
+        _alarmRingingSubscription?.cancel();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _alarmRingingSubscription?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    logger.d("En FinishedRestTimer widget.");
     return SizedBox(
       width: double.infinity,
       child: SingleChildScrollView(
@@ -282,7 +379,7 @@ class FinishedRestTimer extends StatelessWidget {
                 children: [
                   ElevatedButton.icon(
                     onPressed: () {
-                      AppAudioPlayer().stopSound();
+                      Alarm.stopAll();
                       Navigator.of(context).pop();
                     },
                     label: Text("Close"),

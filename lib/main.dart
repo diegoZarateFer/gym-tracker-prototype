@@ -1,4 +1,6 @@
+import 'package:alarm/alarm.dart';
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_ui/core/services/permissions.dart';
 import 'package:gym_tracker_ui/core/theme/app_theme.dart';
 import 'package:gym_tracker_ui/pages/excercise_calendar_page.dart';
 import 'package:gym_tracker_ui/pages/excercise_history_page.dart';
@@ -7,7 +9,22 @@ import 'package:gym_tracker_ui/pages/excercise_instructions_page.dart';
 import 'package:gym_tracker_ui/pages/excercise_stats_page.dart';
 import 'package:gym_tracker_ui/pages/register_workout_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  ///
+  /// Inicializando el gestor de alarmas.
+  ///
+
+  await Alarm.init();
+
+  ///
+  /// Pedir permisos para notificaciones.
+  ///
+  AlarmPermissions.checkNotificationPermission().then(
+    (_) => AlarmPermissions.checkAndroidScheduleExactAlarmPermission(),
+  );
+
   runApp(const MyApp());
 }
 
