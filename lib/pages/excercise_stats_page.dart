@@ -3,7 +3,7 @@ import 'package:gym_tracker_ui/core/extensions/context_ext.dart';
 import 'package:gym_tracker_ui/pages/widgets/dialogs/chart_time_interval_selector_dialog.dart';
 import 'package:gym_tracker_ui/pages/widgets/dialogs/intensity_indicator_selector_dialog.dart';
 import 'package:gym_tracker_ui/pages/widgets/dialogs/unit_selector_dialog.dart';
-import 'package:gym_tracker_ui/pages/widgets/excercise_charts/excercise_set_chart.dart';
+import 'package:gym_tracker_ui/pages/widgets/excercise_charts/excercise_stats_chart.dart';
 import 'package:gym_tracker_ui/pages/widgets/history_log_cell.dart';
 import 'package:gym_tracker_ui/pages/widgets/set_information_header.dart';
 import 'package:gym_tracker_ui/pages/widgets/title_cell.dart';
@@ -111,7 +111,7 @@ class _ExcerciseStatsPageState extends State<ExcerciseStatsPage> {
           padding: const EdgeInsets.all(8),
           child: Column(
             children: [
-              ExcerciseSetChart(onSetClicked: _onSetClicked),
+              ExcerciseStatsChart(onSetClicked: _onSetClicked),
               const SizedBox(height: 16),
               SetInformationContainer(setInformation: _setInformation),
               const SizedBox(height: 16),
