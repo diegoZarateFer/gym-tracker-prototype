@@ -20,12 +20,12 @@ extension ContextExt on BuildContext {
     );
   }
 
-  void showBottomDialog(Widget content) {
-    showModalBottomSheet(
+  Future<T?> showBottomDialog<T>(Widget content) async {
+    return await showModalBottomSheet<T>(
       context: this,
       useSafeArea: true,
       isScrollControlled: true,
-      builder: (modalContext) {
+      builder: (BuildContext modalContext) {
         return Padding(padding: const EdgeInsets.all(8), child: content);
       },
     );

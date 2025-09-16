@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_ui/core/extensions/context_ext.dart';
+import 'package:gym_tracker_ui/pages/widgets/dialogs/chart_time_interval_selector_dialog.dart';
 import 'package:gym_tracker_ui/pages/widgets/excercise_charts/last_year_chart.dart';
 import 'package:intl/intl.dart';
 
@@ -16,6 +18,26 @@ class ExcerciseStatsPage extends StatefulWidget {
 }
 
 class _ExcerciseStatsPageState extends State<ExcerciseStatsPage> {
+  ///
+  /// Variable para controlar tipo de grafico.
+  ///
+  var _selectedChartTimeInterval = ChartTimeInterval.lastTenSessions;
+
+  ///
+  /// Funciones para widgets.
+  ///
+  Future<void> _showTimeIntervalSelectorDailog() async {
+    final newTimeInterval = await context.showBottomDialog<ChartTimeInterval>(
+      ChartTimeIntervalSelectorDialog(
+        initialChartTimeInterval: _selectedChartTimeInterval,
+      ),
+    );
+
+    setState(() {
+      _selectedChartTimeInterval = newTimeInterval!;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +55,20 @@ class _ExcerciseStatsPageState extends State<ExcerciseStatsPage> {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8),
-          child: Column(children: [LastYearChart()]),
+          child: Column(
+            children: [
+              LastYearChart(),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: _showTimeIntervalSelectorDailog,
+                  label: Text("Time Interval"),
+                  icon: Icon(Icons.calendar_month),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
