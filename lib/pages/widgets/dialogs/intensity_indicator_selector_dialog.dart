@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_ui/pages/widgets/check_button.dart';
 import 'package:gym_tracker_ui/pages/widgets/modal_bottom_handle.dart';
 
 enum IntensityIndicator { none, rir, rpe, subjective }
 
 class IntensityIndicatorSelectorDialog extends StatefulWidget {
-  const IntensityIndicatorSelectorDialog({
-    super.key,
-  });
+  const IntensityIndicatorSelectorDialog({super.key});
 
   @override
   State<IntensityIndicatorSelectorDialog> createState() =>
@@ -19,14 +18,6 @@ class _IntensityIndicatorSelectorDialogState
   ///
   IntensityIndicator _selectedIntensityIndicator = IntensityIndicator.none;
 
-  void _changeIntensityIndicatorHandler(
-      IntensityIndicator? selectedIndicator) {
-    setState(() {
-      _selectedIntensityIndicator =
-          selectedIndicator ?? IntensityIndicator.none;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -37,9 +28,7 @@ class _IntensityIndicatorSelectorDialogState
           const ModalBottomHandle(),
           const Text(
             "Intensity Indicator",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           Padding(
@@ -54,72 +43,58 @@ class _IntensityIndicatorSelectorDialogState
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    RadioListTile<IntensityIndicator>(
-                      value: IntensityIndicator.rir,
-                      groupValue: _selectedIntensityIndicator,
-                      subtitle: const Text(
-                        "How many reps you could still do before failure.",
-                      ),
-                      title: const Text(
-                        "RIR",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      onChanged: _changeIntensityIndicatorHandler,
-                      activeColor: Theme.of(context).colorScheme.primary,
-                      controlAffinity: ListTileControlAffinity.trailing,
+                    CheckButton(
+                      isChecked:
+                          _selectedIntensityIndicator == IntensityIndicator.rir,
+                      title: "RIR",
+                      subtitle:
+                          "How many reps you could still do before failure.",
+                      onPressed: () {
+                        setState(() {
+                          _selectedIntensityIndicator = IntensityIndicator.rir;
+                        });
+                      },
                     ),
                     const Divider(),
-                    RadioListTile<IntensityIndicator>(
-                      value: IntensityIndicator.rpe,
-                      groupValue: _selectedIntensityIndicator,
-                      subtitle: const Text(
-                        "A 1–10 scale rating how hard you feel you’re working during exercise.",
-                      ),
-                      title: const Text(
-                        "RPE",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      onChanged: _changeIntensityIndicatorHandler,
-                      activeColor: Theme.of(context).colorScheme.primary,
-                      controlAffinity: ListTileControlAffinity.trailing,
+                    CheckButton(
+                      isChecked:
+                          _selectedIntensityIndicator == IntensityIndicator.rpe,
+                      title: "RPE",
+                      subtitle:
+                          "A 1–10 scale rating how hard you feel you’re working during exercise.",
+                      onPressed: () {
+                        setState(() {
+                          _selectedIntensityIndicator = IntensityIndicator.rpe;
+                        });
+                      },
                     ),
                     const Divider(),
-                    RadioListTile<IntensityIndicator>(
-                      value: IntensityIndicator.subjective,
-                      groupValue: _selectedIntensityIndicator,
-                      subtitle: const Text(
-                        "Recommended for beginners. It allows to choose how hard a set was for you.",
-                      ),
-                      title: const Text(
-                        "Subjective",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      onChanged: _changeIntensityIndicatorHandler,
-                      activeColor: Theme.of(context).colorScheme.primary,
-                      controlAffinity: ListTileControlAffinity.trailing,
+                    CheckButton(
+                      isChecked:
+                          _selectedIntensityIndicator ==
+                          IntensityIndicator.subjective,
+                      title: "Subjective",
+                      subtitle:
+                          "Recommended for beginners. It allows to choose how hard a set was for you.",
+                      onPressed: () {
+                        setState(() {
+                          _selectedIntensityIndicator =
+                              IntensityIndicator.subjective;
+                        });
+                      },
                     ),
                     const Divider(),
-                    RadioListTile<IntensityIndicator>(
-                      value: IntensityIndicator.none,
-                      groupValue: _selectedIntensityIndicator,
-                      title: const Text(
-                        "None",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      subtitle: const Text(
-                        "Only register weight and repetitions.",
-                      ),
-                      onChanged: _changeIntensityIndicatorHandler,
-                      activeColor: Theme.of(context).colorScheme.primary,
-                      controlAffinity: ListTileControlAffinity.trailing,
+                    CheckButton(
+                      isChecked:
+                          _selectedIntensityIndicator ==
+                          IntensityIndicator.none,
+                      title: "None",
+                      subtitle: "Only register weight and repetitions.",
+                      onPressed: () {
+                        setState(() {
+                          _selectedIntensityIndicator = IntensityIndicator.none;
+                        });
+                      },
                     ),
                   ],
                 ),

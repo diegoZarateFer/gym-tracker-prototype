@@ -4,12 +4,14 @@ class CheckButton extends StatelessWidget {
   const CheckButton({
     super.key,
     required this.isChecked,
-    required this.label,
+    required this.title,
+    this.subtitle,
     required this.onPressed,
   });
 
   final bool isChecked;
-  final String label;
+  final String title;
+  final String? subtitle;
   final void Function() onPressed;
 
   @override
@@ -33,12 +35,29 @@ class CheckButton extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Text(
-                label,
-                style: TextStyle(
-                  fontWeight: isChecked ? FontWeight.bold : FontWeight.normal,
-                  color: isChecked ? Colors.white : Colors.white70,
-                ),
+              Column(
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontWeight: isChecked
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                      color: isChecked ? Colors.white : Colors.white70,
+                    ),
+                  ),
+                  if (subtitle != null) const SizedBox(height: 4),
+                  if (subtitle != null)
+                    Text(
+                      subtitle!,
+                      style: TextStyle(
+                        fontWeight: isChecked
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                        color: isChecked ? Colors.white : Colors.white70,
+                      ),
+                    ),
+                ],
               ),
               const Spacer(),
               if (isChecked) Icon(Icons.check, size: 20),

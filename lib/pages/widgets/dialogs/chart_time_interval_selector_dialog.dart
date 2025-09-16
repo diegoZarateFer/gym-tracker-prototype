@@ -92,7 +92,7 @@ class _ChartTimeIntervalSelectorDialogState
                         in ChartTimeInterval.values.reversed) ...[
                       CheckButton(
                         isChecked: timePeriod == _selectedChartTimeInterval,
-                        label: timePeriod.label,
+                        title: timePeriod.label,
                         onPressed: () {
                           setState(() {
                             _selectedChartTimeInterval = timePeriod;
