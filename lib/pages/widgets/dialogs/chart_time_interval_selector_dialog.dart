@@ -100,7 +100,7 @@ class _ChartTimeIntervalSelectorDialogState
                           Navigator.of(context).pop(_selectedChartTimeInterval);
                         },
                       ),
-                      SizedBox(height: 16),
+                      SizedBox(height: 20),
                     ],
                   ],
                 ),

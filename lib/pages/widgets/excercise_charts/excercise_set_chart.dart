@@ -26,16 +26,16 @@ const List<String> _months = [
 
 final List<int> _weightAxisLabels = List.generate(12, (index) => index * 25);
 
-class ExcerciseSetChar extends StatefulWidget {
-  const ExcerciseSetChar({super.key, required this.onSetClicked});
+class ExcerciseSetChart extends StatefulWidget {
+  const ExcerciseSetChart({super.key, required this.onSetClicked});
 
   final void Function(SetInformation) onSetClicked;
 
   @override
-  State<ExcerciseSetChar> createState() => _ExcerciseSetCharState();
+  State<ExcerciseSetChart> createState() => _ExcerciseSetChartState();
 }
 
-class _ExcerciseSetCharState extends State<ExcerciseSetChar> {
+class _ExcerciseSetChartState extends State<ExcerciseSetChart> {
   ///
   /// Dummy data.
   ///
