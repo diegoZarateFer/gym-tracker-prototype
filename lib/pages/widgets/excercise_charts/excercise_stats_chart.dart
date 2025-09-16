@@ -6,7 +6,7 @@ import 'package:gym_tracker_ui/pages/excercise_stats_page.dart';
 import 'package:gym_tracker_ui/pages/widgets/dialogs/intensity_indicator_selector_dialog.dart';
 import 'package:gym_tracker_ui/pages/widgets/dialogs/unit_selector_dialog.dart';
 
-enum ChartXAxisValue { weight, reps }
+enum ChartYAxisValue { weight, reps }
 
 const List<String> _months = [
   "Ene",
@@ -53,7 +53,7 @@ class _ExcerciseStatsChartState extends State<ExcerciseStatsChart> {
   ///
   /// Tipo de eje X seleccionado
   ///
-  ChartXAxisValue _selectedXAxisValue = ChartXAxisValue.weight;
+  ChartYAxisValue _selectedXAxisValue = ChartYAxisValue.weight;
 
   ///
   /// Punto seleccionado.
@@ -64,9 +64,9 @@ class _ExcerciseStatsChartState extends State<ExcerciseStatsChart> {
   /// Funciones para widgets.
   ///
   void _changeChartXAxisValueHandler(int selectedIndex) {
-    ChartXAxisValue newChartXAxisValue = ChartXAxisValue.values[selectedIndex];
+    ChartYAxisValue newChartYAxisValue = ChartYAxisValue.values[selectedIndex];
     setState(() {
-      _selectedXAxisValue = newChartXAxisValue;
+      _selectedXAxisValue = newChartYAxisValue;
     });
   }
 
@@ -89,8 +89,8 @@ class _ExcerciseStatsChartState extends State<ExcerciseStatsChart> {
   @override
   Widget build(BuildContext context) {
     final toggleButtonState = [
-      _selectedXAxisValue == ChartXAxisValue.weight,
-      _selectedXAxisValue == ChartXAxisValue.reps,
+      _selectedXAxisValue == ChartYAxisValue.weight,
+      _selectedXAxisValue == ChartYAxisValue.reps,
     ];
 
     return Container(
