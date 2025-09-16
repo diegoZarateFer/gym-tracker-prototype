@@ -3,7 +3,22 @@ import 'package:gym_tracker_ui/core/extensions/context_ext.dart';
 import 'package:gym_tracker_ui/pages/widgets/check_button.dart';
 import 'package:gym_tracker_ui/pages/widgets/modal_bottom_handle.dart';
 
-enum Unit { units, kgs, lbs }
+enum Unit { units, kgs, lbs, none }
+
+extension UnitLabels on Unit {
+  String get label {
+    switch (this) {
+      case Unit.kgs:
+        return "kgs";
+      case Unit.lbs:
+        return "lbs";
+      case Unit.units:
+        return "units";
+      case Unit.none:
+        return "";
+    }
+  }
+}
 
 class UnitSelectorDialog extends StatefulWidget {
   const UnitSelectorDialog({super.key});
@@ -70,6 +85,13 @@ class _UnitSelectorDialogState extends State<UnitSelectorDialog> {
                   },
                 ),
                 const SizedBox(height: 16),
+                CheckButton(
+                  isChecked: _selectedUnit == Unit.none,
+                  title: "None",
+                  onPressed: () {
+                    _changeSelectedUnit(Unit.none);
+                  },
+                ),
               ],
             ),
           ],

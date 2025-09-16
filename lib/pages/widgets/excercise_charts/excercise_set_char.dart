@@ -2,6 +2,9 @@ import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:gym_tracker_ui/pages/excercise_stats_page.dart';
+import 'package:gym_tracker_ui/pages/widgets/dialogs/intensity_indicator_selector_dialog.dart';
+import 'package:gym_tracker_ui/pages/widgets/dialogs/unit_selector_dialog.dart';
 
 enum ChartXAxisValue { weight, reps }
 
@@ -23,19 +26,39 @@ const List<String> _months = [
 
 final List<int> _weightAxisLabels = List.generate(12, (index) => index * 25);
 
-class LastYearChart extends StatefulWidget {
-  const LastYearChart({super.key});
+class ExcerciseSetChar extends StatefulWidget {
+  const ExcerciseSetChar({super.key, required this.onSetClicked});
+
+  final void Function(SetInformation) onSetClicked;
 
   @override
-  State<LastYearChart> createState() => _LastYearChartState();
+  State<ExcerciseSetChar> createState() => _ExcerciseSetCharState();
 }
 
-class _LastYearChartState extends State<LastYearChart> {
+class _ExcerciseSetCharState extends State<ExcerciseSetChar> {
+  ///
+  /// Dummy data.
+  ///
+
+  final List<FlSpot> randomData = List.generate(
+    12,
+    (index) => FlSpot(index.toDouble(), Random().nextDouble() * 7),
+  );
+
+  final List<bool> repsWereIncremented = List.generate(
+    12,
+    (_) => Random().nextBool(),
+  );
 
   ///
-  /// Eje X seleccionado
+  /// Tipo de eje X seleccionado
   ///
   ChartXAxisValue _selectedXAxisValue = ChartXAxisValue.weight;
+
+  ///
+  /// Punto seleccionado.
+  ///
+  int? _selectedPointIndex;
 
   ///
   /// Funciones para widgets.
@@ -47,18 +70,24 @@ class _LastYearChartState extends State<LastYearChart> {
     });
   }
 
+  void _onPointClicked(double x, double y, int index) {
+    final dummySetInformation = SetInformation(
+      date: DateTime.now(),
+      unit: Unit.units,
+      indicator: IntensityIndicator.rir,
+      reps: 10,
+      indicatorValue: 2,
+      weight: 120,
+    );
+
+    setState(() {
+      _selectedPointIndex = index;
+    });
+    widget.onSetClicked(dummySetInformation);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final List<FlSpot> randomData = List.generate(
-      12,
-      (index) => FlSpot(index.toDouble(), Random().nextDouble() * 7),
-    );
-
-    final List<bool> repsWereIncremented = List.generate(
-      12,
-      (_) => Random().nextBool(),
-    );
-
     final toggleButtonState = [
       _selectedXAxisValue == ChartXAxisValue.weight,
       _selectedXAxisValue == ChartXAxisValue.reps,
@@ -105,20 +134,33 @@ class _LastYearChartState extends State<LastYearChart> {
               child: LineChart(
                 LineChartData(
                   lineTouchData: LineTouchData(
-                    touchTooltipData: LineTouchTooltipData(
-                      tooltipPadding: EdgeInsets.all(4),
-                      getTooltipItems: (List<LineBarSpot> touchedSpots) {
-                        return touchedSpots
-                            .map(
-                              (spot) => LineTooltipItem(
-                                "120lbsx5 @2 RIR",
-                                TextStyle(color: Colors.white),
-                              ),
-                            )
-                            .toList();
-                      },
-                    ),
+                    enabled: true,
                     handleBuiltInTouches: true,
+                    touchTooltipData: LineTouchTooltipData(
+                      getTooltipItems: (_) => [],
+                    ),
+                    touchCallback:
+                        (FlTouchEvent event, LineTouchResponse? touchResponse) {
+                          if (!event.isInterestedForInteractions ||
+                              touchResponse == null) {
+                            return;
+                          }
+
+                          final spot = touchResponse.lineBarSpots?.first;
+                          if (spot != null) {
+                            final index = spot.spotIndex;
+                            _onPointClicked(spot.x, spot.y, index);
+                          }
+                        },
+                    getTouchedSpotIndicator:
+                        (LineChartBarData barData, List<int> spotIndexes) {
+                          return spotIndexes.map((index) {
+                            return TouchedSpotIndicatorData(
+                              FlLine(color: const Color.fromARGB(255, 36, 114, 173), strokeWidth: 2),
+                              FlDotData(show: false),
+                            );
+                          }).toList();
+                        },
                   ),
                   gridData: const FlGridData(show: true),
                   titlesData: FlTitlesData(
@@ -172,11 +214,14 @@ class _LastYearChartState extends State<LastYearChart> {
                       dotData: FlDotData(
                         show: true,
                         getDotPainter: (spot, percent, barData, index) {
+                          if (index == _selectedPointIndex) {
+                            return FlDotCirclePainter(color: Colors.blue);
+                          }
                           if (repsWereIncremented[index]) {
                             return FlDotCirclePainter(color: Colors.amber);
                           }
                           return FlDotCirclePainter(
-                            color: Theme.of(context).colorScheme.secondary,
+                            color: Theme.of(context).colorScheme.primary,
                           );
                         },
                       ),
