@@ -111,7 +111,10 @@ class _ExcerciseStatsPageState extends State<ExcerciseStatsPage> {
           padding: const EdgeInsets.all(8),
           child: Column(
             children: [
-              ExcerciseStatsChart(onSetClicked: _onSetClicked),
+              ExcerciseStatsChart(
+                chartTimeInterval: _selectedChartTimeInterval,
+                onSetClicked: _onSetClicked,
+              ),
               const SizedBox(height: 16),
               SetInformationContainer(setInformation: _setInformation),
               const SizedBox(height: 16),
@@ -148,11 +151,14 @@ class SetInformationContainer extends StatelessWidget {
       ),
       child: setInformation == null
           ? Padding(
-            padding: const EdgeInsets.all(16),
-            child: Center(
-                child: Text("Click a point if you wanto to check information about the set.",textAlign: TextAlign.center,),
+              padding: const EdgeInsets.all(16),
+              child: Center(
+                child: Text(
+                  "Click a point if you wanto to check information about the set.",
+                  textAlign: TextAlign.center,
+                ),
               ),
-          )
+            )
           : Column(
               mainAxisSize: MainAxisSize.min,
               children: [

@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_ui/pages/excercise_stats_page.dart';
+import 'package:gym_tracker_ui/pages/widgets/dialogs/chart_time_interval_selector_dialog.dart';
 import 'package:gym_tracker_ui/pages/widgets/dialogs/intensity_indicator_selector_dialog.dart';
 import 'package:gym_tracker_ui/pages/widgets/dialogs/unit_selector_dialog.dart';
 
@@ -27,8 +28,13 @@ const List<String> _months = [
 final List<int> _weightAxisLabels = List.generate(12, (index) => index * 25);
 
 class ExcerciseStatsChart extends StatefulWidget {
-  const ExcerciseStatsChart({super.key, required this.onSetClicked});
+  const ExcerciseStatsChart({
+    super.key,
+    required this.onSetClicked,
+    required this.chartTimeInterval,
+  });
 
+  final ChartTimeInterval chartTimeInterval;
   final void Function(SetInformation) onSetClicked;
 
   @override
@@ -40,20 +46,18 @@ class _ExcerciseStatsChartState extends State<ExcerciseStatsChart> {
   /// Dummy data.
   ///
 
-  final List<FlSpot> randomData = List.generate(
-    12,
-    (index) => FlSpot(index.toDouble(), Random().nextDouble() * 7),
-  );
-
-  final List<bool> repsWereIncremented = List.generate(
-    12,
-    (_) => Random().nextBool(),
-  );
+  late List<FlSpot> randomData;
+  late List<bool> repsWereIncreased;
 
   ///
-  /// Tipo de eje X seleccionado
+  /// Tipo de eje Y seleccionado
   ///
   ChartYAxisValue _selectedXAxisValue = ChartYAxisValue.weight;
+
+  ///
+  /// Eje x
+  ///
+  late List<String> _xAxisDates;
 
   ///
   /// Punto seleccionado.
@@ -86,6 +90,41 @@ class _ExcerciseStatsChartState extends State<ExcerciseStatsChart> {
     widget.onSetClicked(dummySetInformation);
   }
 
+  ///
+  /// Widget initialization.
+  ///
+  void _initXAxisDates() {
+    _xAxisDates = _months;
+    // switch (widget.chartTimeInterval) {
+    //   case ChartTimeInterval.lastYear:
+    //     xAxisDates = _months;
+    //   case ChartTimeInterval.lastSixMonths:
+    //     // TODO: Handle this case.
+    //     throw UnimplementedError();
+    //   case ChartTimeInterval.lastMonth:
+    //     // TODO: Handle this case.
+    //     throw UnimplementedError();
+    //   case ChartTimeInterval.lastTwentySessions:
+    //     // TODO: Handle this case.
+    //     throw UnimplementedError();
+    //   case ChartTimeInterval.lastTenSessions:
+    //     // TODO: Handle this case.
+    //     throw UnimplementedError();
+    // }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    randomData = List.generate(
+      12,
+      (index) => FlSpot(index.toDouble(), Random().nextDouble() * 7),
+    );
+
+    repsWereIncreased = List.generate(12, (_) => Random().nextBool());
+    _initXAxisDates();
+  }
+
   @override
   Widget build(BuildContext context) {
     final toggleButtonState = [
@@ -108,10 +147,7 @@ class _ExcerciseStatsChartState extends State<ExcerciseStatsChart> {
           children: [
             Row(
               children: [
-                Text(
-                  'My PR \' s for Last Year',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
+                MonthController(),
                 const Spacer(),
                 ToggleButtons(
                   isSelected: toggleButtonState,
@@ -128,7 +164,7 @@ class _ExcerciseStatsChartState extends State<ExcerciseStatsChart> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
             SizedBox(
               height: 300,
               child: LineChart(
@@ -156,7 +192,10 @@ class _ExcerciseStatsChartState extends State<ExcerciseStatsChart> {
                         (LineChartBarData barData, List<int> spotIndexes) {
                           return spotIndexes.map((index) {
                             return TouchedSpotIndicatorData(
-                              FlLine(color: const Color.fromARGB(255, 36, 114, 173), strokeWidth: 2),
+                              FlLine(
+                                color: const Color.fromARGB(255, 36, 114, 173),
+                                strokeWidth: 2,
+                              ),
                               FlDotData(show: false),
                             );
                           }).toList();
@@ -183,7 +222,7 @@ class _ExcerciseStatsChartState extends State<ExcerciseStatsChart> {
                         reservedSize: 25,
                         getTitlesWidget: (value, meta) {
                           int index = value.toInt();
-                          final month = _months[index];
+                          final month = _xAxisDates[index];
                           return SideTitleWidget(
                             meta: meta,
                             child: Transform.rotate(
@@ -206,7 +245,7 @@ class _ExcerciseStatsChartState extends State<ExcerciseStatsChart> {
                   ),
                   borderData: FlBorderData(show: true),
                   minX: 0,
-                  maxX: _months.length - 1,
+                  maxX: _xAxisDates.length - 1,
                   minY: 0,
                   maxY: _weightAxisLabels.length - 1,
                   lineBarsData: [
@@ -217,7 +256,7 @@ class _ExcerciseStatsChartState extends State<ExcerciseStatsChart> {
                           if (index == _selectedPointIndex) {
                             return FlDotCirclePainter(color: Colors.blue);
                           }
-                          if (repsWereIncremented[index]) {
+                          if (repsWereIncreased[index]) {
                             return FlDotCirclePainter(color: Colors.amber);
                           }
                           return FlDotCirclePainter(
@@ -247,6 +286,27 @@ class _ExcerciseStatsChartState extends State<ExcerciseStatsChart> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class MonthController extends StatelessWidget {
+  const MonthController({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          onPressed: () {},
+          icon: const Icon(Icons.arrow_back_ios_new),
+        ),
+        const SizedBox(width: 12),
+        Text("Jan 2025", style: Theme.of(context).textTheme.titleMedium),
+        const SizedBox(width: 12),
+        IconButton(onPressed: () {}, icon: const Icon(Icons.arrow_forward_ios)),
+      ],
     );
   }
 }
