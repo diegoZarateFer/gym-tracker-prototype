@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_ui/pages/excercise_stats_page.dart';
@@ -7,32 +5,24 @@ import 'package:gym_tracker_ui/pages/widgets/dialogs/graph_settings_dialog.dart'
 import 'package:gym_tracker_ui/pages/widgets/dialogs/intensity_indicator_selector_dialog.dart';
 import 'package:gym_tracker_ui/pages/widgets/dialogs/unit_selector_dialog.dart';
 
-const List<String> _months = [
-  "Ene",
-  "Feb",
-  "Mar",
-  "Abr",
-  "May",
-  "Jun",
-  "Jul",
-  "Ago",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dic",
-  " ",
-];
-
-final List<int> _weightAxisLabels = List.generate(12, (index) => index * 25);
-
 class ExcerciseStatsChart extends StatefulWidget {
   const ExcerciseStatsChart({
     super.key,
     required this.onSetClicked,
     required this.chartTimeInterval,
+    required this.chartYAxisValue,
+    required this.dateLabels,
+    required this.repsWereIncreased,
+    required this.chartData,
   });
 
   final ChartTimeInterval chartTimeInterval;
+  final ChartYAxisValue chartYAxisValue;
+
+  final List<String> dateLabels;
+  final List<bool> repsWereIncreased;
+  final List<FlSpot> chartData;
+
   final void Function(SetInformation) onSetClicked;
 
   @override
@@ -40,18 +30,6 @@ class ExcerciseStatsChart extends StatefulWidget {
 }
 
 class _ExcerciseStatsChartState extends State<ExcerciseStatsChart> {
-  ///
-  /// Dummy data.
-  ///
-
-  late List<FlSpot> randomData;
-  late List<bool> repsWereIncreased;
-
-  ///
-  /// Eje x
-  ///
-  late List<String> _xAxisDates;
-
   ///
   /// Punto seleccionado.
   ///
@@ -73,45 +51,10 @@ class _ExcerciseStatsChartState extends State<ExcerciseStatsChart> {
     widget.onSetClicked(dummySetInformation);
   }
 
-  ///
-  /// Widget initialization.
-  ///
-  void _initXAxisDates() {
-    _xAxisDates = _months;
-    // switch (widget.chartTimeInterval) {
-    //   case ChartTimeInterval.lastYear:
-    //     xAxisDates = _months;
-    //   case ChartTimeInterval.lastSixMonths:
-    //     // TODO: Handle this case.
-    //     throw UnimplementedError();
-    //   case ChartTimeInterval.lastMonth:
-    //     // TODO: Handle this case.
-    //     throw UnimplementedError();
-    //   case ChartTimeInterval.lastTwentySessions:
-    //     // TODO: Handle this case.
-    //     throw UnimplementedError();
-    //   case ChartTimeInterval.lastTenSessions:
-    //     // TODO: Handle this case.
-    //     throw UnimplementedError();
-    // }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    randomData = List.generate(
-      12,
-      (index) => FlSpot(index.toDouble(), Random().nextDouble() * 7),
-    );
-
-    repsWereIncreased = List.generate(12, (_) => Random().nextBool());
-    _initXAxisDates();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 430,
+      height: 450,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
@@ -133,7 +76,14 @@ class _ExcerciseStatsChartState extends State<ExcerciseStatsChart> {
                     enabled: true,
                     handleBuiltInTouches: true,
                     touchTooltipData: LineTouchTooltipData(
-                      getTooltipItems: (_) => [],
+                      getTooltipItems: (touchedSpots) {
+                        return touchedSpots.map((spot) {
+                          return LineTooltipItem(
+                            "Sep, 2025",
+                            const TextStyle(fontSize: 12),
+                          );
+                        }).toList();
+                      },
                     ),
                     touchCallback:
                         (FlTouchEvent event, LineTouchResponse? touchResponse) {
@@ -161,36 +111,46 @@ class _ExcerciseStatsChartState extends State<ExcerciseStatsChart> {
                           }).toList();
                         },
                   ),
-                  gridData: const FlGridData(show: true),
+                  gridData: const FlGridData(
+                    show: true,
+                    drawHorizontalLine: true,
+                  ),
                   titlesData: FlTitlesData(
                     show: true,
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 30,
-                        getTitlesWidget: (value, meta) => Text(
-                          _weightAxisLabels[value.toInt()].toString(),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 12),
-                        ),
-                      ),
-                    ),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
                         interval: 1,
-                        reservedSize: 25,
+                        reservedSize: 30,
                         getTitlesWidget: (value, meta) {
                           int index = value.toInt();
-                          final month = _xAxisDates[index];
+
+                          if (widget.chartData.length > 12) {
+                            return const SizedBox.shrink();
+                          }
+
+                          final date = widget.dateLabels[index];
                           return SideTitleWidget(
                             meta: meta,
                             child: Transform.rotate(
-                              angle: -1,
-                              child: Text(
-                                month.toString(),
-                                style: TextStyle(fontSize: 10),
-                              ),
+                              angle: -0.4,
+                              child: Text(date, style: TextStyle(fontSize: 8)),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 40,
+                        getTitlesWidget: (value, meta) {
+                          return SideTitleWidget(
+                            meta: meta,
+                            child: Text(
+                              value.toInt().toString(),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 12),
                             ),
                           );
                         },
@@ -205,18 +165,22 @@ class _ExcerciseStatsChartState extends State<ExcerciseStatsChart> {
                   ),
                   borderData: FlBorderData(show: true),
                   minX: 0,
-                  maxX: _xAxisDates.length - 1,
+                  maxX: widget.dateLabels.length - 1,
                   minY: 0,
-                  maxY: _weightAxisLabels.length - 1,
+                  maxY: 200,
                   lineBarsData: [
                     LineChartBarData(
                       dotData: FlDotData(
                         show: true,
                         getDotPainter: (spot, percent, barData, index) {
-                          if (index == _selectedPointIndex) {
+                          int safeIndex = index.clamp(
+                            0,
+                            widget.chartData.length - 1,
+                          );
+                          if (safeIndex == _selectedPointIndex) {
                             return FlDotCirclePainter(color: Colors.blue);
                           }
-                          if (repsWereIncreased[index]) {
+                          if (widget.repsWereIncreased[safeIndex]) {
                             return FlDotCirclePainter(color: Colors.amber);
                           }
                           return FlDotCirclePainter(
@@ -227,7 +191,7 @@ class _ExcerciseStatsChartState extends State<ExcerciseStatsChart> {
                       color: Theme.of(context).colorScheme.secondary,
                       barWidth: 3,
                       belowBarData: BarAreaData(show: false),
-                      spots: randomData,
+                      spots: widget.chartData,
                     ),
                   ],
                 ),

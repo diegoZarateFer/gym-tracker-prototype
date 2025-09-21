@@ -1,5 +1,9 @@
+import 'dart:math';
+
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_ui/core/extensions/context_ext.dart';
+import 'package:gym_tracker_ui/fake_data/fake_time_intervals.dart';
 import 'package:gym_tracker_ui/pages/widgets/dialogs/graph_settings_dialog.dart';
 import 'package:gym_tracker_ui/pages/widgets/dialogs/intensity_indicator_selector_dialog.dart';
 import 'package:gym_tracker_ui/pages/widgets/dialogs/unit_selector_dialog.dart';
@@ -9,7 +13,27 @@ import 'package:gym_tracker_ui/pages/widgets/set_information_header.dart';
 import 'package:gym_tracker_ui/pages/widgets/title_cell.dart';
 import 'package:intl/intl.dart';
 
-final List<int> dummyDays = [1, 4, 8, 11, 14, 16, 19];
+///
+/// Extension para ayudar a generar random fake data.
+///
+extension RandomData on ChartTimeInterval {
+  int get randomDataLen {
+    switch (this) {
+      case ChartTimeInterval.lastYear:
+        return 12;
+      case ChartTimeInterval.lastSixMonths:
+        return 6;
+      case ChartTimeInterval.lastThreeMonths:
+        return 12;
+      case ChartTimeInterval.lastMonth:
+        return 30;
+      case ChartTimeInterval.lastTwentySessions:
+        return 20;
+      case ChartTimeInterval.lastTenSessions:
+        return 10;
+    }
+  }
+}
 
 final formatter = DateFormat('MMM dd, yyyy');
 
@@ -62,9 +86,17 @@ class ExcerciseStatsPage extends StatefulWidget {
 
 class _ExcerciseStatsPageState extends State<ExcerciseStatsPage> {
   ///
+  /// Dummy data.
+  ///
+
+  late List<FlSpot> _randomData;
+  late List<bool> _repsWereIncreased;
+  late List<String> _dates;
+
+  ///
   /// Variable para controlar intervalo tiempo de grafico.
   ///
-  var _selectedChartTimeInterval = ChartTimeInterval.lastTenSessions;
+  var _selectedChartTimeInterval = ChartTimeInterval.lastYear;
 
   ///
   /// Variable para controlar datos de eje X del grafico.
@@ -79,7 +111,7 @@ class _ExcerciseStatsPageState extends State<ExcerciseStatsPage> {
   ///
   /// Funciones para widgets.
   ///
-  Future<void> _showTimeIntervalSelectorDailog() async {
+  Future<void> _showTimeIntervalSelectorDialog() async {
     final newChartAxis = await context.showBottomDialog<GraphAxisData?>(
       GraphSettingsDialog(
         initialChartTimeInterval: _selectedChartTimeInterval,
@@ -92,6 +124,7 @@ class _ExcerciseStatsPageState extends State<ExcerciseStatsPage> {
         _selectedChartTimeInterval = newChartAxis.chartTimeInterval;
         _selectedYAxisValue = newChartAxis.chartYAxisValue;
       });
+      _generateRandomData();
     }
   }
 
@@ -99,6 +132,53 @@ class _ExcerciseStatsPageState extends State<ExcerciseStatsPage> {
     setState(() {
       _setInformation = setInformation;
     });
+  }
+
+  ///
+  /// Generar un eje X fake.
+  ///
+  void _initXAxisDates(ChartTimeInterval timeInterval) {
+    List<String> dates;
+    switch (timeInterval) {
+      case ChartTimeInterval.lastYear:
+        dates = generateFakeLastYearLabels();
+      case ChartTimeInterval.lastSixMonths:
+        dates = generateFakeLastSixMonthsLabels();
+      case ChartTimeInterval.lastThreeMonths:
+        dates = generateFakeLastThreeMonthsLabels();
+      case ChartTimeInterval.lastMonth:
+        dates = generateFakeLastMonthLabels();
+      case ChartTimeInterval.lastTwentySessions:
+        dates = generateFakeLast20SessionsLabels();
+      case ChartTimeInterval.lastTenSessions:
+        dates = generateFakeLast10SessionsLabels();
+    }
+
+    setState(() {
+      _dates = dates;
+    });
+  }
+
+  ///
+  /// Funcion para generar random data para el grafico.
+  ///
+  void _generateRandomData() {
+    int randomDataLen = _selectedChartTimeInterval.randomDataLen;
+    _repsWereIncreased = List.generate(
+      randomDataLen,
+      (_) => Random().nextBool(),
+    );
+    _randomData = List.generate(
+      randomDataLen,
+      (index) => FlSpot(index.toDouble(), Random().nextDouble() * 200),
+    );
+    _initXAxisDates(_selectedChartTimeInterval);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _generateRandomData();
   }
 
   @override
@@ -122,6 +202,10 @@ class _ExcerciseStatsPageState extends State<ExcerciseStatsPage> {
             children: [
               ExcerciseStatsChart(
                 chartTimeInterval: _selectedChartTimeInterval,
+                chartYAxisValue: _selectedYAxisValue,
+                dateLabels: _dates,
+                chartData: _randomData,
+                repsWereIncreased: _repsWereIncreased,
                 onSetClicked: _onSetClicked,
               ),
               const SizedBox(height: 16),
@@ -130,7 +214,7 @@ class _ExcerciseStatsPageState extends State<ExcerciseStatsPage> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  onPressed: _showTimeIntervalSelectorDailog,
+                  onPressed: _showTimeIntervalSelectorDialog,
                   label: Text("Graph Settings"),
                   icon: Icon(Icons.tune_outlined),
                 ),
