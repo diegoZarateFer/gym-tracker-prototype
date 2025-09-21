@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_ui/core/extensions/context_ext.dart';
-import 'package:gym_tracker_ui/pages/widgets/dialogs/chart_time_interval_selector_dialog.dart';
+import 'package:gym_tracker_ui/pages/widgets/dialogs/graph_settings_dialog.dart';
 import 'package:gym_tracker_ui/pages/widgets/dialogs/intensity_indicator_selector_dialog.dart';
 import 'package:gym_tracker_ui/pages/widgets/dialogs/unit_selector_dialog.dart';
 import 'package:gym_tracker_ui/pages/widgets/excercise_charts/excercise_stats_chart.dart';
@@ -62,9 +62,14 @@ class ExcerciseStatsPage extends StatefulWidget {
 
 class _ExcerciseStatsPageState extends State<ExcerciseStatsPage> {
   ///
-  /// Variable para controlar tipo de grafico.
+  /// Variable para controlar intervalo tiempo de grafico.
   ///
   var _selectedChartTimeInterval = ChartTimeInterval.lastTenSessions;
+
+  ///
+  /// Variable para controlar datos de eje X del grafico.
+  ///
+  var _selectedYAxisValue = ChartYAxisValue.weight;
 
   ///
   /// Variable para mostrar info del set.
@@ -75,15 +80,19 @@ class _ExcerciseStatsPageState extends State<ExcerciseStatsPage> {
   /// Funciones para widgets.
   ///
   Future<void> _showTimeIntervalSelectorDailog() async {
-    final newTimeInterval = await context.showBottomDialog<ChartTimeInterval>(
-      ChartTimeIntervalSelectorDialog(
+    final newChartAxis = await context.showBottomDialog<GraphAxisData?>(
+      GraphSettingsDialog(
         initialChartTimeInterval: _selectedChartTimeInterval,
+        initialChartYAxisValue: _selectedYAxisValue,
       ),
     );
 
-    setState(() {
-      _selectedChartTimeInterval = newTimeInterval!;
-    });
+    if (newChartAxis != null) {
+      setState(() {
+        _selectedChartTimeInterval = newChartAxis.chartTimeInterval;
+        _selectedYAxisValue = newChartAxis.chartYAxisValue;
+      });
+    }
   }
 
   void _onSetClicked(SetInformation setInformation) {
@@ -122,8 +131,8 @@ class _ExcerciseStatsPageState extends State<ExcerciseStatsPage> {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   onPressed: _showTimeIntervalSelectorDailog,
-                  label: Text("Time Interval"),
-                  icon: Icon(Icons.calendar_month),
+                  label: Text("Graph Settings"),
+                  icon: Icon(Icons.tune_outlined),
                 ),
               ),
             ],

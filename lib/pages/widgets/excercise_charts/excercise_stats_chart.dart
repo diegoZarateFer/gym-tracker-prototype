@@ -3,11 +3,9 @@ import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_ui/pages/excercise_stats_page.dart';
-import 'package:gym_tracker_ui/pages/widgets/dialogs/chart_time_interval_selector_dialog.dart';
+import 'package:gym_tracker_ui/pages/widgets/dialogs/graph_settings_dialog.dart';
 import 'package:gym_tracker_ui/pages/widgets/dialogs/intensity_indicator_selector_dialog.dart';
 import 'package:gym_tracker_ui/pages/widgets/dialogs/unit_selector_dialog.dart';
-
-enum ChartYAxisValue { weight, reps }
 
 const List<String> _months = [
   "Ene",
@@ -50,11 +48,6 @@ class _ExcerciseStatsChartState extends State<ExcerciseStatsChart> {
   late List<bool> repsWereIncreased;
 
   ///
-  /// Tipo de eje Y seleccionado
-  ///
-  ChartYAxisValue _selectedXAxisValue = ChartYAxisValue.weight;
-
-  ///
   /// Eje x
   ///
   late List<String> _xAxisDates;
@@ -63,16 +56,6 @@ class _ExcerciseStatsChartState extends State<ExcerciseStatsChart> {
   /// Punto seleccionado.
   ///
   int? _selectedPointIndex;
-
-  ///
-  /// Funciones para widgets.
-  ///
-  void _changeChartXAxisValueHandler(int selectedIndex) {
-    ChartYAxisValue newChartYAxisValue = ChartYAxisValue.values[selectedIndex];
-    setState(() {
-      _selectedXAxisValue = newChartYAxisValue;
-    });
-  }
 
   void _onPointClicked(double x, double y, int index) {
     final dummySetInformation = SetInformation(
@@ -127,13 +110,8 @@ class _ExcerciseStatsChartState extends State<ExcerciseStatsChart> {
 
   @override
   Widget build(BuildContext context) {
-    final toggleButtonState = [
-      _selectedXAxisValue == ChartYAxisValue.weight,
-      _selectedXAxisValue == ChartYAxisValue.reps,
-    ];
-
     return Container(
-      height: 450,
+      height: 430,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
@@ -145,25 +123,7 @@ class _ExcerciseStatsChartState extends State<ExcerciseStatsChart> {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
         child: Column(
           children: [
-            Row(
-              children: [
-                MonthController(),
-                const Spacer(),
-                ToggleButtons(
-                  isSelected: toggleButtonState,
-                  borderRadius: BorderRadius.circular(4),
-                  onPressed: _changeChartXAxisValueHandler,
-                  constraints: const BoxConstraints(
-                    minHeight: 30,
-                    minWidth: 50,
-                  ),
-                  children: [
-                    Padding(padding: EdgeInsets.all(2), child: Text("Weight")),
-                    Padding(padding: EdgeInsets.all(2), child: Text("Reps")),
-                  ],
-                ),
-              ],
-            ),
+            MonthController(),
             const SizedBox(height: 8),
             SizedBox(
               height: 300,
@@ -303,7 +263,10 @@ class MonthController extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_ios_new),
         ),
         const SizedBox(width: 12),
-        Text("Jan 2025", style: Theme.of(context).textTheme.titleMedium),
+        Text(
+          "Dec 28, 2025 - Jan 3, 2026",
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
         const SizedBox(width: 12),
         IconButton(onPressed: () {}, icon: const Icon(Icons.arrow_forward_ios)),
       ],

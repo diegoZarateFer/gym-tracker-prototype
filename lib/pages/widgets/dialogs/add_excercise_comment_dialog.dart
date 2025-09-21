@@ -51,12 +51,15 @@ class AddExerciseComment extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                icon: const Icon(Icons.save),
-                label: const Text("Save"),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  icon: const Icon(Icons.save),
+                  label: const Text("Save"),
+                ),
               ),
             ],
           ),
