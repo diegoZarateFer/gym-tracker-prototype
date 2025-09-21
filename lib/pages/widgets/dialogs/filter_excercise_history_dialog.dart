@@ -50,12 +50,15 @@ class FilterExcerciseHistoryDialog extends StatelessWidget {
               const SizedBox(height: 8),
               const FilterControl(filterName: "Set 5"),
               const SizedBox(height: 16),
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                icon: const Icon(Icons.check),
-                label: const Text("Apply"),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  icon: const Icon(Icons.check),
+                  label: const Text("Apply"),
+                ),
               ),
             ],
           ),

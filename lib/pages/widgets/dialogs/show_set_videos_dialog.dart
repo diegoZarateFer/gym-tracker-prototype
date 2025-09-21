@@ -35,12 +35,15 @@ class ShowSetVideos extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 16),
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                icon: const Icon(Icons.close),
-                label: const Text("Close"),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  icon: const Icon(Icons.close),
+                  label: const Text("Close"),
+                ),
               ),
             ],
           ),

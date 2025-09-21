@@ -11,9 +11,7 @@ import 'package:gym_tracker_ui/pages/widgets/subjective_excercise_history_log.da
 class ExcerciseHistoryPage extends StatefulWidget {
   static const String route = "/excercise-history";
 
-  const ExcerciseHistoryPage({
-    super.key,
-  });
+  const ExcerciseHistoryPage({super.key});
 
   @override
   State<ExcerciseHistoryPage> createState() => _ExcerciseHistoryPageState();
@@ -38,25 +36,19 @@ class _ExcerciseHistoryPageState extends State<ExcerciseHistoryPage> {
             onPressed: () {
               Navigator.of(context).pushNamed(ExcerciseCalendarPage.route);
             },
-            icon: const Icon(
-              Icons.calendar_month,
-            ),
+            icon: const Icon(Icons.calendar_month),
           ),
           IconButton(
             onPressed: () {
               Navigator.of(context).pushNamed(ExcerciseStatsPage.route);
             },
-            icon: const Icon(
-              Icons.auto_graph,
-            ),
+            icon: const Icon(Icons.auto_graph),
           ),
           IconButton(
             onPressed: () {
               context.showBottomDialog(const FilterExcerciseHistoryDialog());
             },
-            icon: const Icon(
-              Icons.tune,
-            ),
+            icon: const Icon(Icons.tune),
           ),
         ],
       ),
@@ -68,6 +60,33 @@ class _ExcerciseHistoryPageState extends State<ExcerciseHistoryPage> {
             RegularExcerciseHistoryLog(),
             SubjectiveExcerciseHistoryLog(),
           ],
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: Theme.of(context).bottomSheetTheme.backgroundColor,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () {},
+                  label: Text("Dec 28, 2025"),
+                  icon: Icon(Icons.calendar_month),
+                ),
+                Icon(Icons.remove),
+                ElevatedButton.icon(
+                  onPressed: () {},
+                  label: Text("Dec 28, 2025"),
+                  icon: Icon(Icons.calendar_month),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

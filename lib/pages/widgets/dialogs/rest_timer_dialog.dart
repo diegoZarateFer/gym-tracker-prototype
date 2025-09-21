@@ -377,13 +377,16 @@ class _FinishedRestTimerState extends State<FinishedRestTimer> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      Alarm.stopAll();
-                      Navigator.of(context).pop();
-                    },
-                    label: Text("Close"),
-                    icon: Icon(Icons.close),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Alarm.stopAll();
+                        Navigator.of(context).pop();
+                      },
+                      label: Text("Close"),
+                      icon: Icon(Icons.close),
+                    ),
                   ),
                 ],
               ),
