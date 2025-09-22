@@ -1,14 +1,10 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:gym_tracker_ui/pages/excercise_stats_page.dart';
 import 'package:gym_tracker_ui/pages/widgets/dialogs/graph_settings_dialog.dart';
-import 'package:gym_tracker_ui/pages/widgets/dialogs/intensity_indicator_selector_dialog.dart';
-import 'package:gym_tracker_ui/pages/widgets/dialogs/unit_selector_dialog.dart';
 
 class ExcerciseStatsChart extends StatefulWidget {
   const ExcerciseStatsChart({
     super.key,
-    required this.onSetClicked,
     required this.chartTimeInterval,
     required this.chartYAxisValue,
     required this.dateLabels,
@@ -23,8 +19,6 @@ class ExcerciseStatsChart extends StatefulWidget {
   final List<bool> repsWereIncreased;
   final List<FlSpot> chartData;
 
-  final void Function(SetInformation) onSetClicked;
-
   @override
   State<ExcerciseStatsChart> createState() => _ExcerciseStatsChartState();
 }
@@ -34,22 +28,6 @@ class _ExcerciseStatsChartState extends State<ExcerciseStatsChart> {
   /// Punto seleccionado.
   ///
   int? _selectedPointIndex;
-
-  void _onPointClicked(double x, double y, int index) {
-    final dummySetInformation = SetInformation(
-      date: DateTime.now(),
-      unit: Unit.units,
-      indicator: IntensityIndicator.rir,
-      reps: 10,
-      indicatorValue: 2,
-      weight: 120,
-    );
-
-    setState(() {
-      _selectedPointIndex = index;
-    });
-    widget.onSetClicked(dummySetInformation);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,8 +44,6 @@ class _ExcerciseStatsChartState extends State<ExcerciseStatsChart> {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
         child: Column(
           children: [
-            MonthController(),
-            const SizedBox(height: 8),
             SizedBox(
               height: 300,
               child: LineChart(
@@ -85,19 +61,6 @@ class _ExcerciseStatsChartState extends State<ExcerciseStatsChart> {
                         }).toList();
                       },
                     ),
-                    touchCallback:
-                        (FlTouchEvent event, LineTouchResponse? touchResponse) {
-                          if (!event.isInterestedForInteractions ||
-                              touchResponse == null) {
-                            return;
-                          }
-
-                          final spot = touchResponse.lineBarSpots?.first;
-                          if (spot != null) {
-                            final index = spot.spotIndex;
-                            _onPointClicked(spot.x, spot.y, index);
-                          }
-                        },
                     getTouchedSpotIndicator:
                         (LineChartBarData barData, List<int> spotIndexes) {
                           return spotIndexes.map((index) {
@@ -197,43 +160,9 @@ class _ExcerciseStatsChartState extends State<ExcerciseStatsChart> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.circle, color: Colors.amber),
-                const SizedBox(width: 4),
-                Text("Increased the number of reps."),
-              ],
-            ),
           ],
         ),
       ),
-    );
-  }
-}
-
-class MonthController extends StatelessWidget {
-  const MonthController({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.arrow_back_ios_new),
-        ),
-        const SizedBox(width: 12),
-        Text(
-          "Dec 28, 2025 - Jan 3, 2026",
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        const SizedBox(width: 12),
-        IconButton(onPressed: () {}, icon: const Icon(Icons.arrow_forward_ios)),
-      ],
     );
   }
 }
