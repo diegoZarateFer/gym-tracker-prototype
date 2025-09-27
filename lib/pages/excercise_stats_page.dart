@@ -4,17 +4,17 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_ui/pages/widgets/excercise_charts/excercise_set_plot.dart';
 
-enum ChartYAxisValue { weight, reps, totalVolume }
+enum ChartYAxisValue { weight, totalVolume, reps }
 
 extension ChartYAxisValueDescription on ChartYAxisValue {
   String get description {
     switch (this) {
       case ChartYAxisValue.weight:
-        return "Visualize the weight you have used over time, the yellow dots indicate the times you increased the number of reps with a certain weight.";
+        return "Weight you have used over time, the yellow dots indicate the times you increased the number of reps with a certain weight.";
       case ChartYAxisValue.reps:
-        return "Visualize the reps you have done over time, the yellow dots indicate the times you increased the weight.";
+        return "Repetitions you have done over time, the yellow dots indicate the times you increased the weight.";
       case ChartYAxisValue.totalVolume:
-        return "The total volume is an indicator of your performance...";
+        return "The total volume the total amount of work performed in a period of time. It is the primary factor that drives  muscle growth and strength over time. To get stronger, your volume must gradually increase.";
     }
   }
 }
@@ -82,8 +82,8 @@ class _ExcerciseStatsPageState extends State<ExcerciseStatsPage> {
   Widget build(BuildContext context) {
     final toggleButtonState = [
       _selectedYAxisValue == ChartYAxisValue.weight,
-      _selectedYAxisValue == ChartYAxisValue.reps,
       _selectedYAxisValue == ChartYAxisValue.totalVolume,
+      _selectedYAxisValue == ChartYAxisValue.reps,
     ];
 
     return Scaffold(

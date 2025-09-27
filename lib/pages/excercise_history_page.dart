@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gym_tracker_ui/pages/excercise_calendar_page.dart';
 import 'package:gym_tracker_ui/core/extensions/context_ext.dart';
 import 'package:gym_tracker_ui/pages/excercise_stats_page.dart';
-import 'package:gym_tracker_ui/pages/plot_data.dart';
+import 'package:gym_tracker_ui/pages/plot_data_page.dart';
 import 'package:gym_tracker_ui/pages/widgets/dialogs/filter_excercise_history_dialog.dart';
 import 'package:gym_tracker_ui/pages/widgets/regular_excercise_history_log.dart';
 import 'package:gym_tracker_ui/pages/widgets/rir_history_excercise_log.dart';
@@ -145,7 +145,7 @@ class _ExcerciseHistoryPageState extends State<ExcerciseHistoryPage> {
                     onPressed: () {
                       Navigator.of(
                         context,
-                      ).push(MaterialPageRoute(builder: (ctx) => PlotData()));
+                      ).push(MaterialPageRoute(builder: (ctx) => PlotDataScreen()));
                     },
                     label: Text("Plot Data"),
                     icon: const Icon(Icons.bar_chart),
