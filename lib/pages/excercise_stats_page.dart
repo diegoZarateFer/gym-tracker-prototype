@@ -2,20 +2,76 @@ import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:gym_tracker_ui/pages/widgets/excercise_charts/excercise_set_plot.dart';
+import 'package:gym_tracker_ui/core/extensions/context_ext.dart';
+import 'package:gym_tracker_ui/fake_data/fake_time_intervals.dart';
+import 'package:gym_tracker_ui/pages/widgets/dialogs/graph_settings_dialog.dart';
+import 'package:gym_tracker_ui/pages/widgets/dialogs/intensity_indicator_selector_dialog.dart';
+import 'package:gym_tracker_ui/pages/widgets/dialogs/unit_selector_dialog.dart';
+import 'package:gym_tracker_ui/pages/widgets/excercise_charts/excercise_stats_chart.dart';
+import 'package:gym_tracker_ui/pages/widgets/history_log_cell.dart';
+import 'package:gym_tracker_ui/pages/widgets/set_information_header.dart';
+import 'package:gym_tracker_ui/pages/widgets/title_cell.dart';
+import 'package:intl/intl.dart';
 
-enum ChartYAxisValue { weight, totalVolume, reps }
-
-extension ChartYAxisValueDescription on ChartYAxisValue {
-  String get description {
+///
+/// Extension para ayudar a generar random fake data.
+///
+extension RandomData on ChartTimeInterval {
+  int get randomDataLen {
     switch (this) {
-      case ChartYAxisValue.weight:
-        return "Weight you have used over time, the yellow dots indicate the times you increased the number of reps with a certain weight.";
-      case ChartYAxisValue.reps:
-        return "Repetitions you have done over time, the yellow dots indicate the times you increased the weight.";
-      case ChartYAxisValue.totalVolume:
-        return "The total volume the total amount of work performed in a period of time. It is the primary factor that drives  muscle growth and strength over time. To get stronger, your volume must gradually increase.";
+      case ChartTimeInterval.lastYear:
+        return 12;
+      case ChartTimeInterval.lastSixMonths:
+        return 6;
+      case ChartTimeInterval.lastThreeMonths:
+        return 12;
+      case ChartTimeInterval.lastMonth:
+        return 30;
+      case ChartTimeInterval.lastTwentySessions:
+        return 20;
+      case ChartTimeInterval.lastTenSessions:
+        return 10;
     }
+  }
+}
+
+final formatter = DateFormat('MMM dd, yyyy');
+
+class SetInformation {
+  final DateTime date;
+
+  final Unit unit;
+  final IntensityIndicator indicator;
+
+  final int reps;
+  final int? indicatorValue;
+  final double weight;
+
+  SetInformation({
+    required this.date,
+    required this.unit,
+    required this.indicator,
+    required this.reps,
+    this.indicatorValue,
+    required this.weight,
+  });
+
+  String get label {
+    switch (indicator) {
+      case IntensityIndicator.none:
+        return "$weight ${unit.label} x $reps";
+      case IntensityIndicator.rir:
+        return "$weight ${unit.label} x $reps @ $indicatorValue RIR";
+      case IntensityIndicator.rpe:
+        return "$weight ${unit.label} x $reps @ $indicatorValue RPE";
+      case IntensityIndicator.subjective:
+        return "$weight ${unit.label} x $reps (Easy)";
+    }
+  }
+
+  @override
+  String toString() {
+    return "Date = $date, Unit = $unit, indicator = $indicator, reps = $reps, indicatorValue = $indicatorValue, reps = $reps";
   }
 }
 
@@ -35,22 +91,79 @@ class _ExcerciseStatsPageState extends State<ExcerciseStatsPage> {
 
   late List<FlSpot> _randomData;
   late List<bool> _repsWereIncreased;
+  late List<String> _dates;
 
   ///
-  /// Explanation text
+  /// Variable para controlar intervalo tiempo de grafico.
   ///
-  String _yAxisParameterdescription = ChartYAxisValue.totalVolume.description;
+  var _selectedChartTimeInterval = ChartTimeInterval.lastYear;
 
   ///
-  /// Tipo de eje Y seleccionado
+  /// Variable para controlar datos de eje X del grafico.
   ///
-  ChartYAxisValue _selectedYAxisValue = ChartYAxisValue.totalVolume;
+  var _selectedYAxisValue = ChartYAxisValue.weight;
+
+  ///
+  /// Variable para mostrar info del set.
+  ///
+  SetInformation? _setInformation;
+
+  ///
+  /// Funciones para widgets.
+  ///
+  Future<void> _showTimeIntervalSelectorDialog() async {
+    final newChartAxis = await context.showBottomDialog<GraphAxisData?>(
+      GraphSettingsDialog(
+        initialChartTimeInterval: _selectedChartTimeInterval,
+        initialChartYAxisValue: _selectedYAxisValue,
+      ),
+    );
+
+    if (newChartAxis != null) {
+      setState(() {
+        _selectedChartTimeInterval = newChartAxis.chartTimeInterval;
+        _selectedYAxisValue = newChartAxis.chartYAxisValue;
+      });
+      _generateRandomData();
+    }
+  }
+
+  void _onSetClicked(SetInformation setInformation) {
+    setState(() {
+      _setInformation = setInformation;
+    });
+  }
+
+  ///
+  /// Generar un eje X fake.
+  ///
+  void _initXAxisDates(ChartTimeInterval timeInterval) {
+    List<String> dates;
+    switch (timeInterval) {
+      case ChartTimeInterval.lastYear:
+        dates = generateFakeLastYearLabels();
+      case ChartTimeInterval.lastSixMonths:
+        dates = generateFakeLastSixMonthsLabels();
+      case ChartTimeInterval.lastThreeMonths:
+        dates = generateFakeLastThreeMonthsLabels();
+      case ChartTimeInterval.lastMonth:
+        dates = generateFakeLastMonthLabels();
+      case ChartTimeInterval.lastTwentySessions:
+        dates = generateFakeLast20SessionsLabels();
+      case ChartTimeInterval.lastTenSessions:
+        dates = generateFakeLast10SessionsLabels();
+    }
+
+    setState(() {
+      _dates = dates;
+    });
+  }
 
   ///
   /// Funcion para generar random data para el grafico.
   ///
   void _generateRandomData() {
-    int randomDataLen = 12;
+    int randomDataLen = _selectedChartTimeInterval.randomDataLen;
     _repsWereIncreased = List.generate(
       randomDataLen,
       (_) => Random().nextBool(),
@@ -59,17 +172,7 @@ class _ExcerciseStatsPageState extends State<ExcerciseStatsPage> {
       randomDataLen,
       (index) => FlSpot(index.toDouble(), Random().nextDouble() * 200),
     );
-  }
-
-  ///
-  /// Funciones para widgets.
-  ///
-  void _changeChartYAxisValueHandler(int selectedIndex) {
-    ChartYAxisValue newChartYAxisValue = ChartYAxisValue.values[selectedIndex];
-    setState(() {
-      _selectedYAxisValue = newChartYAxisValue;
-      _yAxisParameterdescription = newChartYAxisValue.description;
-    });
+    _initXAxisDates(_selectedChartTimeInterval);
   }
 
   @override
@@ -80,12 +183,6 @@ class _ExcerciseStatsPageState extends State<ExcerciseStatsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final toggleButtonState = [
-      _selectedYAxisValue == ChartYAxisValue.weight,
-      _selectedYAxisValue == ChartYAxisValue.totalVolume,
-      _selectedYAxisValue == ChartYAxisValue.reps,
-    ];
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.surface,
@@ -96,146 +193,108 @@ class _ExcerciseStatsPageState extends State<ExcerciseStatsPage> {
             Navigator.of(context).pop();
           },
         ),
-        title: const Text("General Stats"),
+        title: const Text("Excercise Name"),
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+          padding: const EdgeInsets.all(8),
           child: Column(
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 16,
-                ),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: Column(
-                    children: [
-                      RichText(
-                        text: TextSpan(
-                          children: const <TextSpan>[
-                            TextSpan(
-                              text: 'Total number of sets: ',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            TextSpan(
-                              text: '200',
-                              style: TextStyle(fontWeight: FontWeight.normal),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      RichText(
-                        text: TextSpan(
-                          children: const <TextSpan>[
-                            TextSpan(
-                              text: 'Total number of reps: ',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            TextSpan(
-                              text: '1400',
-                              style: TextStyle(fontWeight: FontWeight.normal),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              ExcerciseSetPlot(
-                title: "My Progress",
+              ExcerciseStatsChart(
+                chartTimeInterval: _selectedChartTimeInterval,
+                chartYAxisValue: _selectedYAxisValue,
+                dateLabels: _dates,
                 chartData: _randomData,
                 repsWereIncreased: _repsWereIncreased,
+                onSetClicked: _onSetClicked,
               ),
               const SizedBox(height: 16),
-              Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.circle, color: Colors.amber),
-                            const SizedBox(width: 4),
-                            Text("Increased the number of reps."),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        ToggleButtons(
-                          isSelected: toggleButtonState,
-                          borderRadius: BorderRadius.circular(4),
-                          onPressed: _changeChartYAxisValueHandler,
-                          constraints: const BoxConstraints(
-                            minHeight: 30,
-                            minWidth: 50,
-                          ),
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 2,
-                              ),
-                              child: Text("Weight"),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 2,
-                              ),
-                              child: Text("Total Volume"),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 2,
-                              ),
-                              child: Text("Reps"),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          _yAxisParameterdescription,
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
+              SetInformationContainer(setInformation: _setInformation),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: _showTimeIntervalSelectorDialog,
+                  label: Text("Graph Settings"),
+                  icon: Icon(Icons.tune_outlined),
                 ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class SetInformationContainer extends StatelessWidget {
+  const SetInformationContainer({super.key, this.setInformation});
+
+  final SetInformation? setInformation;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
+        ],
+      ),
+      child: setInformation == null
+          ? Padding(
+              padding: const EdgeInsets.all(16),
+              child: Center(
+                child: Text(
+                  "Click a point if you wanto to check information about the set.",
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            )
+          : Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SetInfomationHeader(
+                  title: formatter.format(setInformation!.date),
+                ),
+                Divider(
+                  height: 1,
+                  thickness: 1,
+                  color: Theme.of(context).colorScheme.onSecondary,
+                ),
+                Table(
+                  border: const TableBorder(
+                    horizontalInside: BorderSide(color: Colors.black, width: 1),
+                  ),
+                  columnWidths: const {
+                    0: FlexColumnWidth(1),
+                    1: FlexColumnWidth(1),
+                    2: FlexColumnWidth(1),
+                    3: FlexColumnWidth(1),
+                    4: FlexColumnWidth(2),
+                  },
+                  children: const <TableRow>[
+                    TableRow(
+                      children: [
+                        TitleCell("Set"),
+                        TitleCell("Weight"),
+                        TitleCell("Reps"),
+                        TitleCell("RPE"),
+                      ],
+                    ),
+                    TableRow(
+                      children: [
+                        TitleCell("1"),
+                        HistoryLogCell(value: "120"),
+                        HistoryLogCell(value: "12"),
+                        HistoryLogCell(value: "2"),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
     );
   }
 }

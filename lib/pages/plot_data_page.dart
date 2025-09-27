@@ -2,9 +2,22 @@ import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:gym_tracker_ui/pages/excercise_stats_page.dart';
+import 'package:gym_tracker_ui/pages/widgets/dialogs/graph_settings_dialog.dart';
 import 'package:gym_tracker_ui/pages/widgets/excercise_charts/excercise_set_plot.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+extension ChartYAxisValueDescription on ChartYAxisValue {
+  String get description {
+    switch (this) {
+      case ChartYAxisValue.weight:
+        return "Weight you have used over time, the yellow dots indicate the times you increased the number of reps with a certain weight.";
+      case ChartYAxisValue.reps:
+        return "Repetitions you have done over time, the yellow dots indicate the times you increased the weight.";
+      case ChartYAxisValue.totalVolume:
+        return "The total volume the total amount of work performed in a period of time. It is the primary factor that drives  muscle growth and strength over time. To get stronger, your volume must gradually increase.";
+    }
+  }
+}
 
 class PlotDataScreen extends StatefulWidget {
   const PlotDataScreen({super.key});
