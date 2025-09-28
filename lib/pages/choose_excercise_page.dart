@@ -12,6 +12,7 @@ class ChooseExcercisePage extends StatefulWidget {
 }
 
 class _ExcerciseCalendarPageState extends State<ChooseExcercisePage> {
+  ///
   /// Funciones para los widgets.
   ///
   void _showCategoryScreen(ExcerciseCategory category, String categoryTitle) {
@@ -45,7 +46,7 @@ class _ExcerciseCalendarPageState extends State<ChooseExcercisePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
@@ -54,6 +55,14 @@ class _ExcerciseCalendarPageState extends State<ChooseExcercisePage> {
           },
         ),
         title: const Text("Choose excercises"),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            icon: Icon(Icons.check),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(

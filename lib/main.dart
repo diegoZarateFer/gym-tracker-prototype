@@ -1,7 +1,9 @@
 import 'package:alarm/alarm.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gym_tracker_ui/core/services/permissions.dart';
 import 'package:gym_tracker_ui/core/theme/app_theme.dart';
+import 'package:gym_tracker_ui/pages/bloc/workout_cubit.dart';
 import 'package:gym_tracker_ui/pages/create_workout_page.dart';
 import 'package:gym_tracker_ui/pages/excercise_calendar_page.dart';
 import 'package:gym_tracker_ui/pages/excercise_history_page.dart';
@@ -26,7 +28,9 @@ void main() async {
     (_) => AlarmPermissions.checkAndroidScheduleExactAlarmPermission(),
   );
 
-  runApp(const MyApp());
+  runApp(
+    BlocProvider(create: (context) => WorkoutCubit(), child: const MyApp()),
+  );
 }
 
 class MyApp extends StatelessWidget {

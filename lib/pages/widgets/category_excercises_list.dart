@@ -1,48 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gym_tracker_ui/core/extensions/context_ext.dart';
 import 'package:gym_tracker_ui/domain/entitites/excercise_blueprint.dart';
+import 'package:gym_tracker_ui/fake_data/excercises_blueprints.dart';
+import 'package:gym_tracker_ui/pages/bloc/workout_cubit.dart';
 import 'package:gym_tracker_ui/pages/widgets/dialogs/add_excercise_to_workout_dialog.dart';
-
-/// En este widget se obtiene la lista de ejercicios de una
-/// categoria mediante un usecase.
-
-const dummyExcercisesBlueprints = [
-  ExcerciseBlueprint(
-    name: "Pull Ups",
-    category: ExcerciseCategory.back,
-    recommendedMinNumberOfReps: 4,
-    recommendedMaxNumberOfReps: 10,
-    recommendedRestTime: Duration(minutes: 3, seconds: 30),
-  ),
-  ExcerciseBlueprint(
-    name: "Bar Row",
-    category: ExcerciseCategory.back,
-    recommendedMinNumberOfReps: 4,
-    recommendedMaxNumberOfReps: 10,
-    recommendedRestTime: Duration(minutes: 3, seconds: 30),
-  ),
-  ExcerciseBlueprint(
-    name: "Inclined Dumbell Press",
-    category: ExcerciseCategory.chest,
-    recommendedMinNumberOfReps: 5,
-    recommendedMaxNumberOfReps: 10,
-    recommendedRestTime: Duration(minutes: 3, seconds: 30),
-  ),
-  ExcerciseBlueprint(
-    name: "EZ Bicep Curl",
-    category: ExcerciseCategory.arms,
-    recommendedMinNumberOfReps: 8,
-    recommendedMaxNumberOfReps: 12,
-    recommendedRestTime: Duration(minutes: 2),
-  ),
-  ExcerciseBlueprint(
-    name: "Squats",
-    category: ExcerciseCategory.quads,
-    recommendedMinNumberOfReps: 3,
-    recommendedMaxNumberOfReps: 6,
-    recommendedRestTime: Duration(minutes: 4),
-  ),
-];
 
 class CategoryExcercisesList extends StatefulWidget {
   const CategoryExcercisesList({
@@ -62,8 +24,32 @@ class _CategoryExcercisesListState extends State<CategoryExcercisesList> {
   ///
   /// Funciones para widgets.
   ///
-  void _addExcerciseToWorkoutHandler() {
-    context.showBottomDialog(AddExcerciseToWorkoutDialog());
+  void _addExcerciseToWorkoutHandler(ExcerciseBlueprint excercise) async {
+    await context.showBottomDialog(AddExcerciseToWorkoutDialog());
+
+    if (mounted) {
+      ///
+      /// Agregar ejercicio al cubit.
+      ///
+
+      context.read<WorkoutCubit>().addExcerciseToWorkout(excercise);
+
+      context.showScaffoldMessage(
+        "Excercise was added to workout!",
+        action: SnackBarAction(
+          label: "Undo",
+          textColor: Theme.of(context).colorScheme.primary,
+          onPressed: () {
+            context.read<WorkoutCubit>().deleteExcerciseFromWorkout(excercise);
+            context.showScaffoldMessage("Excercise removed from workout!");
+          },
+        ),
+      );
+    }
+  }
+
+  void _removeExcerciseToWorkoutHandler(ExcerciseBlueprint excercise) {
+    context.read<WorkoutCubit>().deleteExcerciseFromWorkout(excercise);
   }
 
   @override
@@ -82,43 +68,97 @@ class _CategoryExcercisesListState extends State<CategoryExcercisesList> {
             Navigator.of(context).pop();
           },
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            icon: Icon(Icons.check),
+          ),
+        ],
         title: Text(widget.categoryTitle),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).inputDecorationTheme.fillColor,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: filteredExcercises.isEmpty
-                    ? const Padding(
-                        padding: EdgeInsets.all(32),
-                        child: Center(
-                          child: Text("No Excercises For This Category"),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).inputDecorationTheme.fillColor,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: filteredExcercises.isEmpty
+                      ? const Padding(
+                          padding: EdgeInsets.all(32),
+                          child: Center(
+                            child: Text("No Excercises For This Category"),
+                          ),
+                        )
+                      : ListView.builder(
+                          padding: EdgeInsets.zero,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: filteredExcercises.length,
+                          itemBuilder: (ctx, index) {
+                            final excercise = filteredExcercises[index];
+                            return BlocBuilder<
+                              WorkoutCubit,
+                              List<ExcerciseBlueprint>
+                            >(
+                              builder: (context, state) {
+                                final excerciseIsInWorkout = state.contains(
+                                  excercise,
+                                );
+                                return GestureDetector(
+                                  onTap: () {
+                                    if (state.contains(excercise)) {
+                                      _removeExcerciseToWorkoutHandler(
+                                        excercise,
+                                      );
+                                    } else {
+                                      _addExcerciseToWorkoutHandler(excercise);
+                                    }
+                                  },
+                                  child: ListTile(
+                                    title: Text(excercise.name),
+                                    trailing: AnimatedSwitcher(
+                                      duration: Duration(milliseconds: 400),
+                                      transitionBuilder: (child, anim) =>
+                                          FadeTransition(
+                                            opacity: anim,
+                                            child: ScaleTransition(
+                                              scale: anim,
+                                              child: child,
+                                            ),
+                                          ),
+                                      child: Icon(
+                                        key: ValueKey<bool>(
+                                          excerciseIsInWorkout,
+                                        ),
+                                        excerciseIsInWorkout
+                                            ? Icons.close
+                                            : Icons.add,
+                                        color: excerciseIsInWorkout
+                                            ? Theme.of(
+                                                context,
+                                              ).colorScheme.error
+                                            : Theme.of(
+                                                context,
+                                              ).colorScheme.primary,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
                         ),
-                      )
-                    : ListView.builder(
-                        padding: EdgeInsets.zero,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: filteredExcercises.length,
-                        itemBuilder: (ctx, index) {
-                          return GestureDetector(
-                            onTap: _addExcerciseToWorkoutHandler,
-                            child: ListTile(
-                              title: Text(filteredExcercises[index].name),
-                              trailing: const Icon(Icons.add),
-                            ),
-                          );
-                        },
-                      ),
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

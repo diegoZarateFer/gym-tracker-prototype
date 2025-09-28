@@ -40,6 +40,30 @@ class _AddExcerciseToWorkoutDialogState
             mainAxisSize: MainAxisSize.min,
             children: [
               const ModalBottomHandle(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    icon: const Icon(Icons.check),
+                  ),
+                  const Spacer(),
+                  const Text(
+                    "Configure Exercise",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    icon: const Icon(Icons.close),
+                  ),
+                ],
+              ),
+              const Divider(),
               const Text(
                 "Excercise Unit",
                 style: TextStyle(fontWeight: FontWeight.bold),

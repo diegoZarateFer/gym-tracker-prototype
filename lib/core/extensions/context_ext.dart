@@ -11,11 +11,21 @@ extension ContextExt on BuildContext {
   double get height => size.height;
   double get keyBoardSpace => mediaQuery.viewInsets.bottom + 50;
 
-  void showScaffoldMessage(String message, {int duration = 3}) {
+  void showScaffoldMessage(
+    String message, {
+    int duration = 3,
+    SnackBarAction? action,
+  }) {
+    ScaffoldMessenger.of(this).clearSnackBars();
     ScaffoldMessenger.of(this).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Text(
+          message,
+          style: TextStyle(color: Theme.of(this).colorScheme.onSurface),
+        ),
         duration: Duration(seconds: duration),
+        backgroundColor: Theme.of(this).colorScheme.surface,
+        action: action,
       ),
     );
   }
