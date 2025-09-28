@@ -34,7 +34,7 @@ class _UnitSelectorDialogState extends State<UnitSelectorDialog> {
   Unit _selectedUnit = Unit.kgs;
 
   ///
-  /// Cmabiar la ubidiad selecionada.
+  /// Cambiar la ubidiad selecionada.
   ///
   void _changeSelectedUnit(Unit unit) {
     setState(() {

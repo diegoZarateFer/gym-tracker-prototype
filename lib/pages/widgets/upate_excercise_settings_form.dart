@@ -2,49 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:gym_tracker_ui/core/extensions/context_ext.dart';
 import 'package:gym_tracker_ui/pages/widgets/dialogs/rest_time_selector_dialog.dart';
 import 'package:gym_tracker_ui/pages/widgets/dialogs/unit_selector_dialog.dart';
+import 'package:gym_tracker_ui/pages/widgets/rep_range_selector.dart';
 
-class ExcerciseSettingsForm extends StatefulWidget {
-  const ExcerciseSettingsForm({
+class UpdateExcerciseSettingsForm extends StatefulWidget {
+  const UpdateExcerciseSettingsForm({
     super.key,
     required this.onSaveExcerciseSettings,
   });
 
-  final void Function(
-      {required String name,
-      required int minNumberOfReps,
-      required int maxNumberOfReps}) onSaveExcerciseSettings;
+  final void Function({
+    required String name,
+    required int minNumberOfReps,
+    required int maxNumberOfReps,
+  })
+  onSaveExcerciseSettings;
 
   @override
-  State<ExcerciseSettingsForm> createState() => _ExcerciseSettingsFormState();
+  State<UpdateExcerciseSettingsForm> createState() =>
+      _UpdateExcerciseSettingsFormState();
 }
 
-class _ExcerciseSettingsFormState extends State<ExcerciseSettingsForm> {
+class _UpdateExcerciseSettingsFormState
+    extends State<UpdateExcerciseSettingsForm> {
+  ///
   /// Controllers.
   ///
   final _excerciseNameController = TextEditingController();
 
-  /// Valores del rango de repeticiones.
   ///
-  int _selectedRepRangeStart = 5;
-  int _selectedRepRangeEnd = 10;
-
-  ///TODO: Agregar validaciones a los campos.
+  /// TODO: Agregar validaciones a los campos.
   ///
-
-  /// Funciones para los widgets.
-  ///
-  void _changeRepsRangeHandler(RangeValues newValues) {
-    setState(() {
-      _selectedRepRangeStart = newValues.start.toInt();
-      _selectedRepRangeEnd = newValues.end.toInt();
-    });
-  }
 
   void _onSaveExcerciseSettings() {
     widget.onSaveExcerciseSettings(
       name: _excerciseNameController.text,
-      minNumberOfReps: _selectedRepRangeStart,
-      maxNumberOfReps: _selectedRepRangeEnd,
+      minNumberOfReps: 0,
+      maxNumberOfReps: 0,
     );
   }
 
@@ -58,11 +51,7 @@ class _ExcerciseSettingsFormState extends State<ExcerciseSettingsForm> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.only(
-          top: 16,
-          left: 8,
-          right: 8,
-        ),
+        padding: const EdgeInsets.only(top: 16, left: 8, right: 8),
         child: Column(
           children: [
             TextField(
@@ -83,7 +72,7 @@ class _ExcerciseSettingsFormState extends State<ExcerciseSettingsForm> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(4.0),
+                padding: const EdgeInsets.all(4),
                 child: Column(
                   children: [
                     GestureDetector(
@@ -94,39 +83,30 @@ class _ExcerciseSettingsFormState extends State<ExcerciseSettingsForm> {
                         contentPadding: EdgeInsets.symmetric(horizontal: 4),
                         title: Row(
                           children: [
-                            Icon(
-                              Icons.fitness_center,
-                              color: Colors.yellow,
-                            ),
+                            Icon(Icons.fitness_center, color: Colors.yellow),
                             SizedBox(width: 8),
                             Text("Unit"),
                           ],
                         ),
-                        trailing: Icon(
-                          Icons.arrow_forward_ios,
-                        ),
+                        trailing: Icon(Icons.arrow_forward_ios),
                       ),
                     ),
                     GestureDetector(
                       onTap: () {
-                        context
-                            .showBottomDialog(const RestTimeSelectorDialog());
+                        context.showBottomDialog(
+                          const RestTimeSelectorDialog(),
+                        );
                       },
                       child: const ListTile(
                         contentPadding: EdgeInsets.symmetric(horizontal: 4),
                         title: Row(
                           children: [
-                            Icon(
-                              Icons.timer,
-                              color: Colors.yellow,
-                            ),
+                            Icon(Icons.timer, color: Colors.yellow),
                             SizedBox(width: 8),
                             Text("Rest time between sets"),
                           ],
                         ),
-                        trailing: Icon(
-                          Icons.arrow_forward_ios,
-                        ),
+                        trailing: Icon(Icons.arrow_forward_ios),
                       ),
                     ),
                   ],
@@ -141,44 +121,19 @@ class _ExcerciseSettingsFormState extends State<ExcerciseSettingsForm> {
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Column(children: [
-                  const Text(
-                    "Rep range:",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
+                child: Column(
+                  children: [
+                    const Text(
+                      "Rep range:",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        const TextSpan(text: "Between"),
-                        TextSpan(
-                          text:
-                              " $_selectedRepRangeStart - $_selectedRepRangeEnd ",
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const TextSpan(text: "reps."),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  SliderTheme(
-                    data: SliderTheme.of(context).copyWith(
-                      thumbColor: Colors.white,
-                    ),
-                    child: RangeSlider(
-                      min: 1,
-                      max: 25,
-                      values: RangeValues(_selectedRepRangeStart.toDouble(),
-                          _selectedRepRangeEnd.toDouble()),
-                      onChanged: _changeRepsRangeHandler,
-                    ),
-                  ),
-                ]),
+                    const SizedBox(height: 16),
+                    Expanded(child: RepRangeSelector()),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 16),

@@ -1,21 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gym_tracker_ui/core/extensions/context_ext.dart';
 import 'package:gym_tracker_ui/pages/widgets/modal_bottom_handle.dart';
-
-/// Lista para los minutos.
-///
-final _minutes = List.generate(
-  61,
-  (minute) => minute < 10 ? Text('0$minute') : Text('$minute'),
-);
-
-/// Lista para los segundos.
-///
-final _seconds = List.generate(
-  61,
-  (second) => second < 10 ? Text('0$second') : Text('$second'),
-);
+import 'package:gym_tracker_ui/pages/widgets/rest_time_selector.dart';
 
 class RestTimeSelectorDialog extends StatefulWidget {
   const RestTimeSelectorDialog({super.key});
@@ -27,71 +13,27 @@ class RestTimeSelectorDialog extends StatefulWidget {
 class _RestTimeSelectorDialogState extends State<RestTimeSelectorDialog> {
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 350,
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(2, 2, 2, context.keyBoardSpace),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            const ModalBottomHandle(),
-            const Text(
-              "Set Rest Timer",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: SizedBox(
-                            height: 120,
-                            child: CupertinoPicker(
-                              looping: true,
-                              itemExtent: 40,
-                              onSelectedItemChanged: (int index) {},
-                              children: _minutes,
-                            ),
-                          ),
-                        ),
-                        const Text("min."),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: SizedBox(
-                            height: 120,
-                            child: CupertinoPicker(
-                              looping: true,
-                              itemExtent: 40,
-                              onSelectedItemChanged: (int index) {},
-                              children: _seconds,
-                            ),
-                          ),
-                        ),
-                        const Text("secs."),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton.icon(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              icon: const Icon(Icons.done),
-              label: const Text("Set Timer"),
-            ),
-          ],
-        ),
+    return Padding(
+      padding: EdgeInsets.fromLTRB(2, 2, 2, context.keyBoardSpace),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          const ModalBottomHandle(),
+          const Text(
+            "Set Rest Timer",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          RestTimeSelector(),
+          const SizedBox(height: 16),
+          ElevatedButton.icon(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            icon: const Icon(Icons.done),
+            label: const Text("Set Timer"),
+          ),
+        ],
       ),
     );
   }

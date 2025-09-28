@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gym_tracker_ui/pages/widgets/excercise_settings_form.dart';
+import 'package:gym_tracker_ui/pages/widgets/upate_excercise_settings_form.dart';
 
 class ExcerciseSettingsPage extends StatefulWidget {
   static const String route = "excercise-settings";
@@ -36,7 +36,7 @@ class _ExcerciseSettingsPageState extends State<ExcerciseSettingsPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(4),
-        child: ExcerciseSettingsForm(
+        child: UpdateExcerciseSettingsForm(
           onSaveExcerciseSettings: _saveExcerciseSettingsHandler,
         ),
       ),
