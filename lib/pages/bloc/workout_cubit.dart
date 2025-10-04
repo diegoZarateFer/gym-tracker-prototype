@@ -8,6 +8,18 @@ class WorkoutCubit extends Cubit<List<ExcerciseBlueprint>> {
     emit([...state, excercise]);
   }
 
+  void reorder(int oldIndex, int newIndex) {
+    final updatedList = List<ExcerciseBlueprint>.from(state);
+    if (newIndex > oldIndex) {
+      newIndex -= 1;
+    }
+
+    final item = updatedList.removeAt(oldIndex);
+    updatedList.insert(newIndex, item);
+
+    emit(updatedList);
+  }
+
   void deleteExcerciseFromWorkout(ExcerciseBlueprint excercise) {
     final workout = state;
     workout.remove(excercise);

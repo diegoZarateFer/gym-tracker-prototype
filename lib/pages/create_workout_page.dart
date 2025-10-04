@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gym_tracker_ui/core/extensions/context_ext.dart';
 import 'package:gym_tracker_ui/domain/entitites/excercise_blueprint.dart';
 import 'package:gym_tracker_ui/pages/bloc/workout_cubit.dart';
 import 'package:gym_tracker_ui/pages/choose_excercise_page.dart';
+import 'package:gym_tracker_ui/pages/widgets/dialogs/setup_excercise_dialog.dart';
 
 class CreateWorkoutPage extends StatefulWidget {
   static const String route = "create-workout";
@@ -23,8 +25,22 @@ class _CreateWorkoutPageState extends State<CreateWorkoutPage> {
     Navigator.of(context).pushNamed(ChooseExcercisePage.route);
   }
 
+  void _onEditExcercise() async {
+    await context.showBottomDialog(SetupExcerciseDialog());
+  }
+
   void _onDeleteExcerciseHandler(ExcerciseBlueprint excercise) {
     context.read<WorkoutCubit>().deleteExcerciseFromWorkout(excercise);
+    context.showScaffoldMessage(
+      "${excercise.name} was removed from workout!",
+      action: SnackBarAction(
+        label: "Undo",
+        textColor: Theme.of(context).colorScheme.primary,
+        onPressed: () {
+          context.read<WorkoutCubit>().addExcerciseToWorkout(excercise);
+        },
+      ),
+    );
   }
 
   @override
@@ -85,52 +101,74 @@ class _CreateWorkoutPageState extends State<CreateWorkoutPage> {
                       );
                     }
 
-                    return ListView.builder(
+                    return ReorderableListView.builder(
                       shrinkWrap: true,
                       padding: EdgeInsets.zero,
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: workoutExcercises.length,
+                      onReorder: (oldIndex, newIndex) {
+                        context.read<WorkoutCubit>().reorder(
+                          oldIndex,
+                          newIndex,
+                        );
+                      },
                       itemBuilder: (ctx, index) {
                         final excercise = workoutExcercises[index];
                         int restTimeMinutes =
                             excercise.recommendedRestTime.inSeconds ~/ 60;
                         int restTimeSeconds =
                             excercise.recommendedRestTime.inSeconds % 60;
-                        return ListTile(
-                          leading: Icon(
-                            Icons.drag_handle_outlined,
-                            color: Theme.of(context).colorScheme.primary,
+                        return Dismissible(
+                          key: ValueKey(excercise),
+                          direction: DismissDirection.endToStart,
+                          background: Container(
+                            color: Theme.of(context).colorScheme.error,
+                            alignment: Alignment.centerRight,
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: const Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
                           ),
-                          title: Text(
-                            excercise.name,
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Row(
-                            children: [
-                              Text("3 sets"),
-                              const SizedBox(width: 8),
-                              Icon(Icons.timer),
-                              const SizedBox(width: 4),
-                              Text("$restTimeMinutes:$restTimeSeconds"),
-                              const SizedBox(width: 8),
-                              Text("10 - 20 reps"),
-                            ],
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.edit),
-                              const SizedBox(width: 16),
-                              GestureDetector(
-                                onTap: () {
-                                  _onDeleteExcerciseHandler(excercise);
-                                },
-                                child: Icon(
-                                  Icons.delete,
-                                  color: Theme.of(context).colorScheme.error,
+                          onDismissed: (direction) {
+                            if (direction == DismissDirection.endToStart) {
+                              _onDeleteExcerciseHandler(excercise);
+                            }
+                          },
+                          child: ListTile(
+                            leading: Icon(
+                              Icons.drag_handle_outlined,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            title: Text(
+                              excercise.name,
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Row(
+                              children: [
+                                Text("3 sets"),
+                                const SizedBox(width: 8),
+                                Icon(Icons.timer),
+                                const SizedBox(width: 4),
+                                Text("$restTimeMinutes:$restTimeSeconds"),
+                                const SizedBox(width: 8),
+                                Text("10 - 20 reps"),
+                              ],
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                GestureDetector(
+                                  onTap: _onEditExcercise,
+                                  child: Icon(
+                                    Icons.edit,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         );
                       },

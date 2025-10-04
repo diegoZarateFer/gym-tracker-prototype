@@ -5,16 +5,16 @@ import 'package:gym_tracker_ui/pages/widgets/modal_bottom_handle.dart';
 import 'package:gym_tracker_ui/pages/widgets/rep_range_selector.dart';
 import 'package:gym_tracker_ui/pages/widgets/rest_time_selector.dart';
 
-class AddExcerciseToWorkoutDialog extends StatefulWidget {
-  const AddExcerciseToWorkoutDialog({super.key});
+class SetupExcerciseDialog extends StatefulWidget {
+  const SetupExcerciseDialog({super.key});
 
   @override
-  State<AddExcerciseToWorkoutDialog> createState() =>
+  State<SetupExcerciseDialog> createState() =>
       _AddExcerciseToWorkoutDialogState();
 }
 
 class _AddExcerciseToWorkoutDialogState
-    extends State<AddExcerciseToWorkoutDialog> {
+    extends State<SetupExcerciseDialog> {
   ///
   /// Variable para controlar la unidad seleccionada.
   ///

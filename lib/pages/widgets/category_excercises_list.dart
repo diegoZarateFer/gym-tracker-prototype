@@ -4,7 +4,7 @@ import 'package:gym_tracker_ui/core/extensions/context_ext.dart';
 import 'package:gym_tracker_ui/domain/entitites/excercise_blueprint.dart';
 import 'package:gym_tracker_ui/fake_data/excercises_blueprints.dart';
 import 'package:gym_tracker_ui/pages/bloc/workout_cubit.dart';
-import 'package:gym_tracker_ui/pages/widgets/dialogs/add_excercise_to_workout_dialog.dart';
+import 'package:gym_tracker_ui/pages/widgets/dialogs/setup_excercise_dialog.dart';
 
 class CategoryExcercisesList extends StatefulWidget {
   const CategoryExcercisesList({
@@ -25,7 +25,7 @@ class _CategoryExcercisesListState extends State<CategoryExcercisesList> {
   /// Funciones para widgets.
   ///
   void _addExcerciseToWorkoutHandler(ExcerciseBlueprint excercise) async {
-    await context.showBottomDialog(AddExcerciseToWorkoutDialog());
+    await context.showBottomDialog(SetupExcerciseDialog());
 
     if (mounted) {
       ///
@@ -35,13 +35,13 @@ class _CategoryExcercisesListState extends State<CategoryExcercisesList> {
       context.read<WorkoutCubit>().addExcerciseToWorkout(excercise);
 
       context.showScaffoldMessage(
-        "Excercise was added to workout!",
+        "${excercise.name} was added to workout!",
         action: SnackBarAction(
           label: "Undo",
           textColor: Theme.of(context).colorScheme.primary,
           onPressed: () {
             context.read<WorkoutCubit>().deleteExcerciseFromWorkout(excercise);
-            context.showScaffoldMessage("Excercise removed from workout!");
+            context.showScaffoldMessage("${excercise.name} removed from workout!");
           },
         ),
       );
