@@ -2,18 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:gym_tracker_ui/domain/entitites/excercise_blueprint.dart';
 import 'package:gym_tracker_ui/pages/widgets/category_excercises_list.dart';
 
-class ExcercisesInstructionsPage extends StatefulWidget {
-  static const String route = "/excercise-blueprints";
+class ChooseExcercisePage extends StatefulWidget {
+  static const String route = "/choose-excercise";
 
-  const ExcercisesInstructionsPage({
-    super.key,
-  });
+  const ChooseExcercisePage({super.key});
 
   @override
-  State<ExcercisesInstructionsPage> createState() => _ExcerciseCalendarPageState();
+  State<ChooseExcercisePage> createState() => _ExcerciseCalendarPageState();
 }
 
-class _ExcerciseCalendarPageState extends State<ExcercisesInstructionsPage> {
+class _ExcerciseCalendarPageState extends State<ChooseExcercisePage> {
+  ///
   /// Funciones para los widgets.
   ///
   void _showCategoryScreen(ExcerciseCategory category, String categoryTitle) {
@@ -21,16 +20,18 @@ class _ExcerciseCalendarPageState extends State<ExcercisesInstructionsPage> {
       PageRouteBuilder(
         pageBuilder: (ctx, animatin, secondaryAnimation) =>
             CategoryExcercisesList(
-          category: category,
-          categoryTitle: categoryTitle,
-        ),
+              category: category,
+              categoryTitle: categoryTitle,
+            ),
         transitionsBuilder: (ctx, animation, secondaryAnimation, child) {
           const begin = Offset(1.0, 0.0);
           const end = Offset.zero;
           const curve = Curves.ease;
 
-          final tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          final tween = Tween(
+            begin: begin,
+            end: end,
+          ).chain(CurveTween(curve: curve));
 
           return SlideTransition(
             position: animation.drive(tween),
@@ -45,7 +46,7 @@ class _ExcerciseCalendarPageState extends State<ExcercisesInstructionsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
@@ -53,14 +54,27 @@ class _ExcerciseCalendarPageState extends State<ExcercisesInstructionsPage> {
             Navigator.of(context).pop();
           },
         ),
-        title: const Text("Excercise Categories"),
+        title: const Text("Choose excercises"),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            icon: Icon(Icons.check),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              const Text(
+                "Select one or more excercises for the workout.",
+                style: TextStyle(fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 16),
               Container(
                 decoration: BoxDecoration(
@@ -75,9 +89,7 @@ class _ExcerciseCalendarPageState extends State<ExcercisesInstructionsPage> {
                       },
                       child: const ListTile(
                         title: Text("Chest"),
-                        trailing: Icon(
-                          Icons.arrow_forward_ios,
-                        ),
+                        trailing: Icon(Icons.arrow_forward_ios),
                       ),
                     ),
                     GestureDetector(
@@ -86,9 +98,7 @@ class _ExcerciseCalendarPageState extends State<ExcercisesInstructionsPage> {
                       },
                       child: const ListTile(
                         title: Text("Back"),
-                        trailing: Icon(
-                          Icons.arrow_forward_ios,
-                        ),
+                        trailing: Icon(Icons.arrow_forward_ios),
                       ),
                     ),
                     GestureDetector(
@@ -97,20 +107,19 @@ class _ExcerciseCalendarPageState extends State<ExcercisesInstructionsPage> {
                       },
                       child: const ListTile(
                         title: Text("Arms"),
-                        trailing: Icon(
-                          Icons.arrow_forward_ios,
-                        ),
+                        trailing: Icon(Icons.arrow_forward_ios),
                       ),
                     ),
                     GestureDetector(
                       onTap: () {
-                        _showCategoryScreen(ExcerciseCategory.shoulders, "Shoulders");
+                        _showCategoryScreen(
+                          ExcerciseCategory.shoulders,
+                          "Shoulders",
+                        );
                       },
                       child: const ListTile(
                         title: Text("Shoulders"),
-                        trailing: Icon(
-                          Icons.arrow_forward_ios,
-                        ),
+                        trailing: Icon(Icons.arrow_forward_ios),
                       ),
                     ),
                     GestureDetector(
@@ -119,53 +128,55 @@ class _ExcerciseCalendarPageState extends State<ExcercisesInstructionsPage> {
                       },
                       child: const ListTile(
                         title: Text("Quads"),
-                        trailing: Icon(
-                          Icons.arrow_forward_ios,
-                        ),
+                        trailing: Icon(Icons.arrow_forward_ios),
                       ),
                     ),
                     GestureDetector(
                       onTap: () {
-                        _showCategoryScreen(ExcerciseCategory.hamstrings,"Hamstrings");
+                        _showCategoryScreen(
+                          ExcerciseCategory.hamstrings,
+                          "Hamstrings",
+                        );
                       },
                       child: const ListTile(
                         title: Text("Hamstrings"),
-                        trailing: Icon(
-                          Icons.arrow_forward_ios,
-                        ),
+                        trailing: Icon(Icons.arrow_forward_ios),
                       ),
                     ),
                     GestureDetector(
                       onTap: () {
-                        _showCategoryScreen(ExcerciseCategory.glutes,"Glutes");
+                        _showCategoryScreen(ExcerciseCategory.glutes, "Glutes");
                       },
                       child: const ListTile(
                         title: Text("Glutes"),
-                        trailing: Icon(
-                          Icons.arrow_forward_ios,
-                        ),
+                        trailing: Icon(Icons.arrow_forward_ios),
                       ),
                     ),
                     GestureDetector(
                       onTap: () {
-                        _showCategoryScreen(ExcerciseCategory.calves,"Calves");
+                        _showCategoryScreen(ExcerciseCategory.calves, "Calves");
                       },
                       child: const ListTile(
                         title: Text("Calves"),
-                        trailing: Icon(
-                          Icons.arrow_forward_ios,
-                        ),
+                        trailing: Icon(Icons.arrow_forward_ios),
                       ),
                     ),
                     GestureDetector(
                       onTap: () {
-                        _showCategoryScreen(ExcerciseCategory.abs,"Abs");
+                        _showCategoryScreen(ExcerciseCategory.abs, "Abs");
                       },
                       child: const ListTile(
                         title: Text("Abs"),
-                        trailing: Icon(
-                          Icons.arrow_forward_ios,
-                        ),
+                        trailing: Icon(Icons.arrow_forward_ios),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        _showCategoryScreen(ExcerciseCategory.abs, "Abs");
+                      },
+                      child: const ListTile(
+                        title: Text("Custom"),
+                        trailing: Icon(Icons.arrow_forward_ios),
                       ),
                     ),
                   ],
