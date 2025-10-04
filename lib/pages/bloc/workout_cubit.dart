@@ -4,6 +4,9 @@ import 'package:gym_tracker_ui/domain/entitites/excercise_blueprint.dart';
 class WorkoutCubit extends Cubit<List<ExcerciseBlueprint>> {
   WorkoutCubit() : super([]);
 
+  int? _lastRemovedIndex;
+  ExcerciseBlueprint? _lastRemovedExcercise;
+
   void addExcerciseToWorkout(ExcerciseBlueprint excercise) {
     emit([...state, excercise]);
   }
@@ -21,9 +24,23 @@ class WorkoutCubit extends Cubit<List<ExcerciseBlueprint>> {
   }
 
   void deleteExcerciseFromWorkout(ExcerciseBlueprint excercise) {
-    final workout = state;
-    workout.remove(excercise);
+    final updatedList = List<ExcerciseBlueprint>.from(state);
 
-    emit([...workout]);
+    _lastRemovedExcercise = excercise;
+    _lastRemovedIndex = updatedList.indexOf(excercise);
+
+    updatedList.remove(excercise);
+
+    emit(updatedList);
+  }
+
+  void undoRemove() {
+    final updatedList = List<ExcerciseBlueprint>.from(state);
+    updatedList.insert(_lastRemovedIndex!, _lastRemovedExcercise!);
+
+    emit(updatedList);
+
+    _lastRemovedIndex = null;
+    _lastRemovedExcercise = null;
   }
 }

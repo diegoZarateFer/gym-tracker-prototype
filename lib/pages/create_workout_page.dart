@@ -37,7 +37,7 @@ class _CreateWorkoutPageState extends State<CreateWorkoutPage> {
         label: "Undo",
         textColor: Theme.of(context).colorScheme.primary,
         onPressed: () {
-          context.read<WorkoutCubit>().addExcerciseToWorkout(excercise);
+          context.read<WorkoutCubit>().undoRemove();
         },
       ),
     );
@@ -176,7 +176,16 @@ class _CreateWorkoutPageState extends State<CreateWorkoutPage> {
                   },
                 ),
               ),
-              const SizedBox(height: 16),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
